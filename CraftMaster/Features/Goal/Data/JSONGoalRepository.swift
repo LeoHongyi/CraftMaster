@@ -8,8 +8,8 @@
 import Foundation
 
 actor JSONGoalRepository: GoalRepository {
-
     private let fileURL: URL
+    private var logCountByGoalId: [UUID: Int] = [:]   // Day3 临时
 
     init(filename: String = "goals.json") {
         let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -17,10 +17,7 @@ actor JSONGoalRepository: GoalRepository {
     }
 
     func listGoals() async throws -> [Goal] {
-        guard FileManager.default.fileExists(atPath: fileURL.path) else {
-            return []
-        }
-
+        guard FileManager.default.fileExists(atPath: fileURL.path) else { return [] }
         let data = try Data(contentsOf: fileURL)
         let goals = try JSONDecoder().decode([Goal].self, from: data)
         return goals.sorted { $0.createdAt > $1.createdAt }
@@ -28,17 +25,29 @@ actor JSONGoalRepository: GoalRepository {
 
     func createGoal(title: String, targetHours: Int) async throws -> Goal {
         var goals = try await listGoals()
-        let newGoal: Goal = await MainActor.run {
-            Goal(
-                id: UUID(),
-                title: title,
-                targetHours: targetHours,
-                createdAt: Date()
-            )
-        }
-        goals.insert(newGoal, at: 0)
+        let new = Goal(title: title, targetHours: targetHours, createdAt: Date())
+        goals.insert(new, at: 0)
         try persist(goals)
-        return newGoal
+        logCountByGoalId[new.id] = 0
+        return new
+    }
+
+    func updateGoal(_ goal: Goal) async throws {
+        var goals = try await listGoals()
+        guard let idx = goals.firstIndex(where: { $0.id == goal.id }) else { return }
+        goals[idx] = goal
+        try persist(goals)
+    }
+
+    func deleteGoal(id: UUID) async throws {
+        var goals = try await listGoals()
+        goals.removeAll { $0.id == id }
+        try persist(goals)
+        logCountByGoalId[id] = nil
+    }
+
+    func logCount(goalId: UUID) async throws -> Int {
+        logCountByGoalId[goalId, default: 0]
     }
 
     private func persist(_ goals: [Goal]) throws {

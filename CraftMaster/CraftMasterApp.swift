@@ -13,11 +13,8 @@ struct CraftMasterApp: App {
     private let goalRepo = JSONGoalRepository()
 
     var body: some Scene {
-        WindowGroup {
-            // Domain
-            let useCase = GoalUseCase(repo: goalRepo)
-            // UI
-            GoalListView(vm: GoalListViewModel(useCase: useCase))
-        }
+       WindowGroup {
+           AppFactory.makeGoalListView()
+       }
     }
 }

@@ -11,7 +11,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = B300B6412F1C808A002FBEBF /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B300B6482F1C808A002FBEBF /* CraftMaster */;
+			remoteGlobalIDString = B300B6482F1C808A002FBEBF;
 			remoteInfo = CraftMaster;
 		};
 /* End PBXContainerItemProxy section */
@@ -128,14 +128,6 @@
 		};
 /* End PBXNativeTarget section */
 
-/* Begin PBXTargetDependency section */
-		B300B6A12F1CE2A4002FBEBF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B300B6482F1C808A002FBEBF /* CraftMaster */;
-			targetProxy = B300B6A02F1CE2A4002FBEBF /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin PBXProject section */
 		B300B6412F1C808A002FBEBF /* Project object */ = {
 			isa = PBXProject;
@@ -205,6 +197,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B300B6A12F1CE2A4002FBEBF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B300B6482F1C808A002FBEBF /* CraftMaster */;
+			targetProxy = B300B6A02F1CE2A4002FBEBF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		B300B6522F1C808C002FBEBF /* Debug */ = {

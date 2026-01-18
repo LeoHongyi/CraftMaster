@@ -1,35 +1,42 @@
 import Foundation
 
 actor InMemoryGoalRepository: GoalRepository {
-    private var storage: [Goal] = []
-    private var didSeed = false
+    private var storage: [Goal] = [
+        Goal(title: "Learn iOS", targetHours: 300, createdAt: Date()),
+        Goal(title: "Build CraftMaster", targetHours: 200, createdAt: Date())
+    ]
 
-    private func seedIfNeeded() async {
-        guard !didSeed else { return }
-        didSeed = true
-
-        // Swift 6 can enforce stricter global-actor isolation on initializers.
-        // Seeding asynchronously lets us safely hop to MainActor if required.
-        let seededGoals: [Goal] = await MainActor.run {
-            [
-                Goal(title: "Learn iOS", targetHours: 300, createdAt: Date()),
-                Goal(title: "Build CraftMaster", targetHours: 200, createdAt: Date())
-            ]
-        }
-        storage = seededGoals
-    }
+    /// Day3: 临时模拟 “某些 goal 有记录”
+    private var logCountByGoalId: [UUID: Int] = [:]
 
     func listGoals() async throws -> [Goal] {
-        await seedIfNeeded()
-        return storage.sorted { $0.createdAt > $1.createdAt }
+        storage.sorted { $0.createdAt > $1.createdAt }
     }
 
     func createGoal(title: String, targetHours: Int) async throws -> Goal {
-        await seedIfNeeded()
-        let new: Goal = await MainActor.run {
-            Goal(title: title, targetHours: targetHours, createdAt: Date())
-        }
+        let new = Goal(title: title, targetHours: targetHours, createdAt: Date())
         storage.insert(new, at: 0)
+        // 默认没有记录
+        logCountByGoalId[new.id] = 0
         return new
+    }
+
+    func updateGoal(_ goal: Goal) async throws {
+        guard let idx = storage.firstIndex(where: { $0.id == goal.id }) else { return }
+        storage[idx] = goal
+    }
+
+    func deleteGoal(id: UUID) async throws {
+        storage.removeAll { $0.id == id }
+        logCountByGoalId[id] = nil
+    }
+
+    func logCount(goalId: UUID) async throws -> Int {
+        logCountByGoalId[goalId, default: 0]
+    }
+
+    // 仅用于你本地调试：给某个 goal 加上“已有记录”
+    func _debug_setLogCount(goalId: UUID, count: Int) async {
+        logCountByGoalId[goalId] = count
     }
 }

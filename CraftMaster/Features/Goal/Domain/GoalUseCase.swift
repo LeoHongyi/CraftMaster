@@ -21,4 +21,25 @@ struct GoalUseCase {
         }
         return try await repo.createGoal(title: trimmed, targetHours: targetHours)
     }
+
+    func update(goal: Goal) async throws {
+        let trimmed = goal.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            throw AppError.invalidInput("Title cannot be empty")
+        }
+        guard goal.targetHours > 0 else {
+            throw AppError.invalidInput("Target hours must be > 0")
+        }
+        var fixed = goal
+        fixed.title = trimmed
+        try await repo.updateGoal(fixed)
+    }
+
+    func delete(goalId: UUID) async throws {
+        let count = try await repo.logCount(goalId: goalId)
+        guard count == 0 else {
+            throw AppError.operationNotAllowed("This goal has records and cannot be deleted.")
+        }
+        try await repo.deleteGoal(id: goalId)
+    }
 }
