@@ -9,9 +9,15 @@ import SwiftUI
 
 @main
 struct CraftMasterApp: App {
+    // Data
+    private let goalRepo = JSONGoalRepository()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            // Domain
+            let useCase = GoalUseCase(repo: goalRepo)
+            // UI
+            GoalListView(vm: GoalListViewModel(useCase: useCase))
         }
     }
 }

@@ -6,8 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		B300B6A02F1CE2A4002FBEBF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B300B6412F1C808A002FBEBF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B300B6482F1C808A002FBEBF /* CraftMaster */;
+			remoteInfo = CraftMaster;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		B300B6492F1C808A002FBEBF /* CraftMaster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CraftMaster.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B300B6572F1C90AA002FBEBF /* CraftMasterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CraftMasterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -16,10 +27,22 @@
 			path = CraftMaster;
 			sourceTree = "<group>";
 		};
+		B300B6582F1C90AA002FBEBF /* CraftMasterTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CraftMasterTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		B300B6462F1C808A002FBEBF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B300B6592F1C90AA002FBEBF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -34,6 +57,7 @@
 			children = (
 				B300B64B2F1C808A002FBEBF /* CraftMaster */,
 				B300B64A2F1C808A002FBEBF /* Products */,
+				B300B69B2F1CE224002FBEBF /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -41,8 +65,17 @@
 			isa = PBXGroup;
 			children = (
 				B300B6492F1C808A002FBEBF /* CraftMaster.app */,
+				B300B6572F1C90AA002FBEBF /* CraftMasterTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B300B69B2F1CE224002FBEBF /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				B300B6582F1C90AA002FBEBF /* CraftMasterTests */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -70,7 +103,38 @@
 			productReference = B300B6492F1C808A002FBEBF /* CraftMaster.app */;
 			productType = "com.apple.product-type.application";
 		};
+		B300B65A2F1C90AA002FBEBF /* CraftMasterTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B300B65D2F1C90AA002FBEBF /* Build configuration list for PBXNativeTarget "CraftMasterTests" */;
+			buildPhases = (
+				B300B65B2F1C90AA002FBEBF /* Sources */,
+				B300B6592F1C90AA002FBEBF /* Frameworks */,
+				B300B65C2F1C90AA002FBEBF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B300B6A12F1CE2A4002FBEBF /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				B300B6582F1C90AA002FBEBF /* CraftMasterTests */,
+			);
+			name = CraftMasterTests;
+			packageProductDependencies = (
+			);
+			productName = CraftMasterTests;
+			productReference = B300B6572F1C90AA002FBEBF /* CraftMasterTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
+
+/* Begin PBXTargetDependency section */
+		B300B6A12F1CE2A4002FBEBF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B300B6482F1C808A002FBEBF /* CraftMaster */;
+			targetProxy = B300B6A02F1CE2A4002FBEBF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXProject section */
 		B300B6412F1C808A002FBEBF /* Project object */ = {
@@ -81,6 +145,9 @@
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					B300B6482F1C808A002FBEBF = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					B300B65A2F1C90AA002FBEBF = {
 						CreatedOnToolsVersion = 26.2;
 					};
 				};
@@ -100,6 +167,7 @@
 			projectRoot = "";
 			targets = (
 				B300B6482F1C808A002FBEBF /* CraftMaster */,
+				B300B65A2F1C90AA002FBEBF /* CraftMasterTests */,
 			);
 		};
 /* End PBXProject section */
@@ -112,10 +180,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B300B65C2F1C90AA002FBEBF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B300B6452F1C808A002FBEBF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B300B65B2F1C90AA002FBEBF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -306,6 +388,54 @@
 			};
 			name = Release;
 		};
+		B300B65E2F1C90AA002FBEBF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(PRODUCT_NAME)";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.leo.CraftMasterTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CraftMaster.app/CraftMaster";
+			};
+			name = Debug;
+		};
+		B300B65F2F1C90AA002FBEBF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(PRODUCT_NAME)";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.leo.CraftMasterTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CraftMaster.app/CraftMaster";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -323,6 +453,15 @@
 			buildConfigurations = (
 				B300B6552F1C808C002FBEBF /* Debug */,
 				B300B6562F1C808C002FBEBF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B300B65D2F1C90AA002FBEBF /* Build configuration list for PBXNativeTarget "CraftMasterTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B300B65E2F1C90AA002FBEBF /* Debug */,
+				B300B65F2F1C90AA002FBEBF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
