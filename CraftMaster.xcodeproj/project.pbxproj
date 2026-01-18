@@ -21,9 +21,22 @@
 		B300B6572F1C90AA002FBEBF /* CraftMasterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CraftMasterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B300B7E62F1D2922002FBEBF /* Exceptions for "CraftMaster" folder in "CraftMaster" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Features/Log/Data/Untitled.swift,
+			);
+			target = B300B6482F1C808A002FBEBF /* CraftMaster */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B300B64B2F1C808A002FBEBF /* CraftMaster */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B300B7E62F1D2922002FBEBF /* Exceptions for "CraftMaster" folder in "CraftMaster" target */,
+			);
 			path = CraftMaster;
 			sourceTree = "<group>";
 		};
