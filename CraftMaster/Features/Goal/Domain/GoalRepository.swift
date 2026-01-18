@@ -15,6 +15,4 @@ protocol GoalRepository {
     func updateGoal(_ goal: Goal) async throws
     func deleteGoal(id: UUID) async throws
 
-    /// 临时：用于 Day3 业务约束（后面会换成 LogRepository）
-    func logCount(goalId: UUID) async throws -> Int
 }

@@ -9,12 +9,9 @@ import SwiftUI
 
 @main
 struct CraftMasterApp: App {
-    // Data
-    private let goalRepo = JSONGoalRepository()
-
     var body: some Scene {
-       WindowGroup {
-           AppFactory.makeGoalListView()
-       }
+        WindowGroup {
+            AppFactory.makeRootView()
+        }
     }
 }
