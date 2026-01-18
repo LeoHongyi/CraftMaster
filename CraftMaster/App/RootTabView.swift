@@ -16,6 +16,9 @@ struct RootTabView: View {
 
             LogHomeScreen()
                 .tabItem { Label("Log", systemImage: "pencil") }
+           
+            AchievementsScreen()
+               .tabItem { Label("Achievements", systemImage: "trophy") }
         }
     }
 }
