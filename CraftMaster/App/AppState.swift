@@ -111,4 +111,51 @@ final class AppState: ObservableObject {
     func totalMinutes() -> Int {
         logs.reduce(0) { $0 + $1.minutes }
     }
+   
+   func currentStreak() -> Int {
+      let cal = Calendar.current
+      let today = cal.startOfDay(for: Date())
+      let days = loggedDaysSet()
+
+      guard days.contains(today) else { return 0 }
+
+      var streak = 0
+      var cursor = today
+      while days.contains(cursor) {
+            streak += 1
+            cursor = cal.date(byAdding: .day, value: -1, to: cursor)!
+      }
+      return streak
+   }
+   
+   func bestStreak() -> Int {
+       let cal = Calendar.current
+       let days = loggedDaysSet()
+
+       guard !days.isEmpty else { return 0 }
+
+       let sorted = days.sorted() // 从早到晚
+       var best = 1
+       var current = 1
+
+       for i in 1..<sorted.count {
+           let prev = sorted[i - 1]
+           let cur = sorted[i]
+
+           if let nextDay = cal.date(byAdding: .day, value: 1, to: prev),
+              cal.isDate(nextDay, inSameDayAs: cur) {
+               current += 1
+               best = max(best, current)
+           } else {
+               current = 1
+           }
+       }
+
+       return best
+   }
+   
+   private func loggedDaysSet() -> Set<Date> {
+       let cal = Calendar.current
+       return Set(logs.map { cal.startOfDay(for: $0.day) })
+   }
 }
