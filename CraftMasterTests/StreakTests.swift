@@ -13,8 +13,9 @@ final class StreakTests: XCTestCase {
     func testStreak_whenNoLogToday_isZero() async throws {
         let goalRepo = InMemoryGoalRepository()
         let logRepo = InMemoryLogRepository()
+        let achievementRepo = InMemoryAchievementRepository()
 
-        let app = await MainActor.run { AppState(goalRepo: goalRepo, logRepo: logRepo) }
+        let app = await MainActor.run { AppState(goalRepo: goalRepo, logRepo: logRepo, achievementRepo: achievementRepo) }
 
         // 只有昨天
         let cal = Calendar.current
@@ -28,8 +29,9 @@ final class StreakTests: XCTestCase {
     func testStreak_threeDaysContinuous_isThree() async throws {
         let goalRepo = InMemoryGoalRepository()
         let logRepo = InMemoryLogRepository()
+        let achievementRepo = InMemoryAchievementRepository()
 
-        let app = await MainActor.run { AppState(goalRepo: goalRepo, logRepo: logRepo) }
+        let app = await MainActor.run { AppState(goalRepo: goalRepo, logRepo: logRepo, achievementRepo: achievementRepo) }
 
         let cal = Calendar.current
         let today = Date()

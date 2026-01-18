@@ -13,7 +13,8 @@ final class BestStreakTests: XCTestCase {
     func testBestStreak_withGaps_returnsLongestRun() async throws {
         let goalRepo = InMemoryGoalRepository()
         let logRepo = InMemoryLogRepository()
-        let app = await MainActor.run { AppState(goalRepo: goalRepo, logRepo: logRepo) }
+        let achievementRepo = InMemoryAchievementRepository()
+        let app = await MainActor.run { AppState(goalRepo: goalRepo, logRepo: logRepo, achievementRepo: achievementRepo) }
 
         let cal = Calendar.current
         let today = Date()

@@ -15,18 +15,23 @@ final class AppState: ObservableObject {
     // 数据源
     @Published private(set) var goals: [Goal] = []
     @Published private(set) var logs: [LogEntry] = []
+    @Published private(set) var unlockedAchievements: [AchievementUnlock] = []
+    @Published private(set) var lastUnlocked: AchievementUnlock?   // 用于弹窗反馈（Week3 Day4）
 
     // 依赖（Data/Domain）
     private let goalRepo: GoalRepository
     private let logRepo: LogRepository
     private let goalUseCase: GoalUseCase
     private let logUseCase: LogUseCase
+    private let achievementRepo: AchievementRepository
+    private let achievementEngine = AchievementEngine()
 
-    init(goalRepo: GoalRepository, logRepo: LogRepository) {
+    init(goalRepo: GoalRepository, logRepo: LogRepository, achievementRepo: AchievementRepository) {
         self.goalRepo = goalRepo
         self.logRepo = logRepo
         self.goalUseCase = GoalUseCase(repo: goalRepo, logRepo: logRepo)
         self.logUseCase = LogUseCase(repo: logRepo)
+        self.achievementRepo = achievementRepo
     }
 
     // MARK: - Load
@@ -35,10 +40,12 @@ final class AppState: ObservableObject {
     }
 
     func reloadAll() async {
-        async let g: Void = loadGoals()
-        async let l: Void = loadLogs()
-        await g
-        await l
+       async let g: Void = loadGoals()
+       async let l: Void = loadLogs()
+       async let a: Void = loadAchievements()
+       await g
+       await l
+       await a
     }
 
     func loadGoals() async {
@@ -56,7 +63,40 @@ final class AppState: ObservableObject {
         } catch {
             print("loadLogs error:", error)
         }
+       await evaluateAchievementsAfterLogsChanged()
     }
+   
+   private func evaluateAchievementsAfterLogsChanged() async {
+       let context = AchievementContext(
+           currentStreak: currentStreak(),
+           bestStreak: bestStreak()
+       )
+
+       let unlockedIds = Set(unlockedAchievements.map { $0.id })
+       let newUnlocks = achievementEngine.newlyUnlocked(
+           context: context,
+           alreadyUnlockedIds: unlockedIds,
+           now: Date()
+       )
+
+       guard !newUnlocks.isEmpty else { return }
+
+       let merged = (unlockedAchievements + newUnlocks)
+           .reduce(into: [String: AchievementUnlock]()) { dict, item in
+               // 如果重复，保留最早一次也可以；这里简单覆盖无所谓
+               dict[item.id] = item
+           }
+           .values
+           .sorted { $0.unlockedAt < $1.unlockedAt }
+
+       do {
+           try await achievementRepo.saveUnlocked(merged)
+           unlockedAchievements = merged
+           lastUnlocked = newUnlocks.last
+       } catch {
+           print("saveUnlocked error:", error)
+       }
+   }
 
     // MARK: - Helpers
     func goalTitle(_ id: UUID) -> String {
@@ -158,4 +198,53 @@ final class AppState: ObservableObject {
        let cal = Calendar.current
        return Set(logs.map { cal.startOfDay(for: $0.day) })
    }
+   
+   func loadAchievements() async {
+       do {
+           unlockedAchievements = try await achievementRepo.listUnlocked()
+       } catch {
+           print("loadAchievements error:", error)
+       }
+   }
 }
+
+#if DEBUG
+extension AppState {
+    func debugReloadAll() {
+        Task { await reloadAll() }
+    }
+
+    func debugClearAllLogs() {
+        Task {
+            do {
+                let all = try await logRepo.listLogs(goalId: nil)
+                for item in all {
+                    try await logRepo.deleteLog(id: item.id)
+                }
+                await loadLogs()
+            } catch {
+                print("debugClearAllLogs error:", error)
+            }
+        }
+    }
+
+    func debugSeedStreak(days: Int, minutes: Int = 10) {
+        guard let gid = goals.first?.id else {
+            print("debugSeedStreak: no goals")
+            return
+        }
+
+        Task {
+            let cal = Calendar.current
+            for i in 0..<days {
+                let day = cal.date(byAdding: .day, value: -i, to: Date())!
+                try? await upsertLog(goalId: gid, day: day, minutes: minutes)
+            }
+        }
+    }
+
+    func debugSeedMilestone(_ milestone: Int) {
+        debugSeedStreak(days: milestone, minutes: 10)
+    }
+}
+#endif

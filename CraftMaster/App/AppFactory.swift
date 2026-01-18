@@ -7,7 +7,8 @@ enum AppFactory {
         let goalRepo = JSONGoalRepository()
         let logRepo = JSONLogRepository()
 
-        let appState = AppState(goalRepo: goalRepo, logRepo: logRepo)
+        let achievementRepo = JSONAchievementRepository()
+        let appState = AppState(goalRepo: goalRepo, logRepo: logRepo, achievementRepo: achievementRepo)
 
         return RootTabView()
             .environmentObject(appState)

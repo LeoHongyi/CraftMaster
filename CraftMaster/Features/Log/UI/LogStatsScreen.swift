@@ -8,6 +8,9 @@ struct LogStatsScreen: View {
     @State private var lastStreak: Int = 0
     @State private var milestoneText: String?
     @State private var showMilestone = false
+    #if DEBUG
+    @State private var showDebugPanel = false
+    #endif
    
 
     var body: some View {
@@ -28,28 +31,33 @@ struct LogStatsScreen: View {
         }
         // 当 logs 变化时（保存/编辑/删除）触发
         .onChange(of: app.logs) { _, _ in
-            let newStreak = app.currentStreak()
-            if StreakTrigger.shouldAnimate(old: lastStreak, new: newStreak) {
+           let newStreak = app.currentStreak()
+
+           if StreakTrigger.shouldAnimate(old: lastStreak, new: newStreak) {
+               Haptics.light()
                playStreakAnimation()
-               checkMilestone(newStreak)
-            }
-            if newStreak > lastStreak {
-               playStreakAnimation()
-               checkMilestone(newStreak)
-            }
+           }
+
+           if Milestone.shouldShow(for: newStreak), newStreak > lastStreak {
+               Haptics.success()
+               showMilestoneBadge(newStreak)
+           }
             lastStreak = newStreak
         }
+         #if DEBUG
+         .contentShape(Rectangle())
+         .onLongPressGesture(minimumDuration: 1.0) {
+             showDebugPanel = true
+         }
+         .sheet(isPresented: $showDebugPanel) {
+             DebugPanelView().environmentObject(app)
+         }
+         #endif
         .overlay(alignment: .top) {
             if showMilestone, let text = milestoneText {
-                Text(text)
-                    .font(.headline)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 14)
-                    .background(.ultraThinMaterial)
-                    .clipShape(Capsule())
-                    .shadow(radius: 8)
-                    .padding(.top, 12)
-                    .transition(.move(edge: .top).combined(with: .opacity))
+               PixelBadge(text: text)
+                       .padding(.top, 12)
+                       .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
     }
@@ -138,11 +146,8 @@ struct LogStatsScreen: View {
         }
     }
    
-    private func checkMilestone(_ streak: Int) {
-       let milestones: Set<Int> = [3, 7, 14, 30]
-       guard milestones.contains(streak) else { return }
-
-       milestoneText = "🔥 \(streak)-day streak!"
+   private func showMilestoneBadge(_ streak: Int) {
+       milestoneText = Milestone.text(for: streak)
        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
            showMilestone = true
        }
