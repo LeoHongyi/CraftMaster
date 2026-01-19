@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LogHistoryScreen: View {
     @EnvironmentObject private var app: AppState
+    @Environment(\.colorScheme) private var scheme
     @State private var editing: LogEntry?
     @State private var alert: SimpleAlert?
 
@@ -21,15 +22,20 @@ struct LogHistoryScreen: View {
     var body: some View {
         List {
             ForEach(app.logs) { log in
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(app.goalTitle(log.goalId)).font(.headline)
-                    Text("\(formatDay(log.day)) • \(log.minutes) min")
-                        .foregroundStyle(.secondary)
+                PixelCard(padding: PixelTheme.m) {
+                    VStack(alignment: .leading, spacing: PixelTheme.s) {
+                        Text(app.goalTitle(log.goalId))
+                            .font(PixelTheme.titleFont())
+
+                        Text("\(formatDay(log.day)) • \(log.minutes) min")
+                            .font(PixelTheme.bodyFont())
+                            .foregroundStyle(PixelTheme.secondaryText(scheme))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(.vertical, 4)
                 .contentShape(Rectangle())
                 .onTapGesture { editing = log }
-                .swipeActions {
+                .swipeActions(edge: .trailing) {
                     Button(role: .destructive) {
                         Task {
                             do { try await app.deleteLog(id: log.id) }
@@ -38,9 +44,22 @@ struct LogHistoryScreen: View {
                     } label: {
                         Label("Delete", systemImage: "trash")
                     }
+
+                    Button {
+                        editing = log
+                    } label: {
+                        Label("Edit", systemImage: "pencil")
+                    }
+                    .tint(PixelTheme.accent(scheme))
                 }
+                .listRowInsets(EdgeInsets(top: PixelTheme.s, leading: PixelTheme.l, bottom: PixelTheme.s, trailing: PixelTheme.l))
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
             }
         }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .background(PixelTheme.bg(scheme))
         .sheet(item: $editing) { entry in
             EditLogView(entry: entry) { minutes in
                 Task {

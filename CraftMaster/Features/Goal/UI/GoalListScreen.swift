@@ -9,10 +9,12 @@ import SwiftUI
 
 struct GoalListScreen: View {
     @EnvironmentObject private var app: AppState
+    @Environment(\.colorScheme) private var scheme
 
     @State private var showAdd = false
     @State private var editingGoal: Goal?
     @State private var alert: GoalListViewModel.AlertState? // 复用之前的结构也行
+    @State private var showArchived = false
 
     var body: some View {
         NavigationStack {
@@ -28,24 +30,32 @@ struct GoalListScreen: View {
                 } else {
                     List {
                         ForEach(app.goals) { goal in
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(goal.title).font(.headline)
-                                Text("Target: \(goal.targetHours)h")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
+                            PixelCard(padding: PixelTheme.m) {
+                                VStack(alignment: .leading, spacing: PixelTheme.s) {
+                                    Text(goal.title)
+                                        .font(PixelTheme.titleFont())
+
+                                    Text("Target: \(goal.targetHours)h")
+                                        .font(PixelTheme.bodyFont())
+                                        .foregroundStyle(PixelTheme.secondaryText(scheme))
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                            .padding(.vertical, 4)
+                            .listRowInsets(EdgeInsets(top: PixelTheme.s, leading: PixelTheme.l, bottom: PixelTheme.s, trailing: PixelTheme.l))
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
                             .contentShape(Rectangle())
                             .onTapGesture { editingGoal = goal }
                             .swipeActions {
-                                Button(role: .destructive) {
+                                Button {
                                     Task {
-                                        do { try await app.deleteGoal(id: goal.id) }
+                                        do { try await app.archiveGoal(id: goal.id) }
                                         catch { showError(error) }
                                     }
                                 } label: {
-                                    Label("Delete", systemImage: "trash")
+                                    Label("Archive", systemImage: "archivebox")
                                 }
+                                .tint(PixelTheme.border(scheme))
 
                                 Button {
                                     editingGoal = goal
@@ -56,11 +66,19 @@ struct GoalListScreen: View {
                             }
                         }
                     }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
                 }
             }
-            .navigationTitle("Goals")
+            .background(PixelTheme.bg(scheme))
+            .pixelNavigationTitle("Goals")
             .toolbar {
                 Button { showAdd = true } label: { Image(systemName: "plus") }
+                Button {
+                    showArchived = true
+                } label: {
+                    Image(systemName: "archivebox")
+                }
             }
             .sheet(isPresented: $showAdd) {
                 AddGoalSheet { title in
@@ -80,6 +98,10 @@ struct GoalListScreen: View {
             }
             .alert(item: $alert) { a in
                 Alert(title: Text(a.title), message: Text(a.message), dismissButton: .default(Text("OK")))
+            }
+            .sheet(isPresented: $showArchived) {
+                ArchivedGoalsScreen()
+                    .environmentObject(app)
             }
         }
     }

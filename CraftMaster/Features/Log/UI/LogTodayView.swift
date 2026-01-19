@@ -35,7 +35,7 @@ struct LogTodayView: View {
                         .disabled(vm.selectedGoalId == nil)
                 }
             }
-            .navigationTitle("Log Today")
+            .pixelNavigationTitle("Log Today")
             .onAppear { vm.load() }
             .alert(item: $vm.alert) { a in
                 Alert(title: Text(a.title), message: Text(a.message), dismissButton: .default(Text("OK")))

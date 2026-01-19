@@ -13,12 +13,16 @@ import Combine
 final class AppState: ObservableObject {
 
     // 数据源
+    /// All goals including archived (kept so logs/history can still resolve titles).
+    @Published private(set) var allGoals: [Goal] = []
+    /// Active (non-archived) goals for normal UI flows.
     @Published private(set) var goals: [Goal] = []
     @Published private(set) var logs: [LogEntry] = []
     @Published private(set) var unlockedAchievements: [AchievementUnlock] = []
     @Published private(set) var lastUnlocked: AchievementUnlock?
     @Published var pendingAchievementToasts: [AchievementDefinition] = []
     @Published var highlightAchievementId: String?
+    @Published private(set) var stats: StatsCache = .init()
 
     // 依赖（Data/Domain）
     private let goalRepo: GoalRepository
@@ -52,7 +56,9 @@ final class AppState: ObservableObject {
 
     func loadGoals() async {
         do {
-            goals = try await goalRepo.listGoals()
+            let list = try await goalRepo.listGoals()
+            allGoals = list
+            goals = list.filter { !$0.isArchived }
         } catch {
             // Day1: 简化处理。Week2 Day2 我们会做全局错误流
             print("loadGoals error:", error)
@@ -60,19 +66,23 @@ final class AppState: ObservableObject {
     }
 
     func loadLogs() async {
-        do {
-            logs = try await logRepo.listLogs(goalId: nil)
-        } catch {
-            print("loadLogs error:", error)
-        }
+       do {
+           logs = try await logRepo.listLogs(goalId: nil)
+           recomputeStats(from: logs)
+
+       } catch {
+           print("loadLogs error:", error)
+           stats = .init() // 可选：避免 UI 显示旧数据
+       }
+
        await evaluateAchievementsAfterLogsChanged()
     }
    
    private func evaluateAchievementsAfterLogsChanged() async {
-       let context = AchievementContext(
-           currentStreak: currentStreak(),
-           bestStreak: bestStreak()
-       )
+      let context = AchievementContext(
+          currentStreak: stats.currentStreak,
+          bestStreak: stats.bestStreak
+      )
 
        let unlockedIds = Set(unlockedAchievements.map { $0.id })
        let newUnlocks = achievementEngine.newlyUnlocked(
@@ -111,7 +121,7 @@ final class AppState: ObservableObject {
 
     // MARK: - Helpers
     func goalTitle(_ id: UUID) -> String {
-        goals.first(where: { $0.id == id })?.title ?? "Unknown Goal"
+        allGoals.first(where: { $0.id == id })?.title ?? "Unknown Goal"
     }
 
     // MARK: - Goal Actions
@@ -125,9 +135,18 @@ final class AppState: ObservableObject {
         await reloadAll()
     }
 
-    func deleteGoal(id: UUID) async throws {
+    /// Archive (soft delete) a goal. Logs stay and history/stats keep working.
+    func archiveGoal(id: UUID) async throws {
         try await goalUseCase.delete(goalId: id)
         await reloadAll()
+    }
+
+    func unarchiveGoal(id: UUID) async throws {
+        guard let idx = allGoals.firstIndex(where: { $0.id == id }) else { return }
+        var restored = allGoals[idx]
+        restored.isArchived = false
+        try await goalRepo.updateGoal(restored)
+        await loadGoals()
     }
 
     // MARK: - Log Actions
@@ -216,6 +235,80 @@ final class AppState: ObservableObject {
        } catch {
            print("loadAchievements error:", error)
        }
+   }
+   
+   private func recomputeStats(from logs: [LogEntry]) {
+       let cal = Calendar.current
+       let today = cal.startOfDay(for: Date())
+
+       var total = 0
+       var todaySum = 0
+       var weekSum = 0
+
+       var days = Set<Date>()
+
+       for log in logs {
+           total += log.minutes
+
+           let day = cal.startOfDay(for: log.day)
+           days.insert(day)
+
+           if cal.isDate(day, inSameDayAs: today) {
+               todaySum += log.minutes
+           }
+
+           if cal.isDate(day, equalTo: today, toGranularity: .weekOfYear) {
+               weekSum += log.minutes
+           }
+       }
+
+       let current = computeCurrentStreak(from: days, today: today)
+       let best = computeBestStreak(from: days)
+
+       stats = StatsCache(
+           todayMinutes: todaySum,
+           weekMinutes: weekSum,
+           totalMinutes: total,
+           currentStreak: current,
+           bestStreak: best
+       )
+   }
+   
+   private func computeCurrentStreak(from days: Set<Date>, today: Date) -> Int {
+       let cal = Calendar.current
+       guard days.contains(today) else { return 0 }
+
+       var streak = 0
+       var cursor = today
+       while days.contains(cursor) {
+           streak += 1
+           cursor = cal.date(byAdding: .day, value: -1, to: cursor)!
+       }
+       return streak
+   }
+
+   private func computeBestStreak(from days: Set<Date>) -> Int {
+       let cal = Calendar.current
+       guard !days.isEmpty else { return 0 }
+
+       let sorted = days.sorted() // 从早到晚
+       var best = 1
+       var current = 1
+
+       for i in 1..<sorted.count {
+           let prev = sorted[i - 1]
+           let cur = sorted[i]
+
+           if let nextDay = cal.date(byAdding: .day, value: 1, to: prev),
+              cal.isDate(nextDay, inSameDayAs: cur) {
+               current += 1
+               best = max(best, current)
+           } else {
+               current = 1
+           }
+       }
+
+       return best
    }
 }
 

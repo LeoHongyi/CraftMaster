@@ -57,7 +57,7 @@ struct DebugPanelView: View {
                     row("Total Minutes", "\(app.totalMinutes())")
                 }
             }
-            .navigationTitle("Debug Panel")
+            .pixelNavigationTitle("Debug Panel")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") { dismiss() }

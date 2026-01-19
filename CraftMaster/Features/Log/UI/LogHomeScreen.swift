@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LogHomeScreen: View {
     @EnvironmentObject private var app: AppState
+    @Environment(\.colorScheme) private var scheme
     @State private var page: Page = .today
 
     enum Page: String, CaseIterable, Identifiable {
@@ -38,7 +39,7 @@ struct LogHomeScreen: View {
                     LogStatsScreen()
                 }
             }
-            .navigationTitle("Log")
+            .pixelNavigationTitle("Log")
         }
     }
 }

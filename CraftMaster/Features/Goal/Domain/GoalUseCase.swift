@@ -31,10 +31,8 @@ struct GoalUseCase {
     }
 
     func delete(goalId: UUID) async throws {
-        let count = try await logRepo.countLogs(goalId: goalId)   // ✅ 真约束
-        guard count == 0 else {
-            throw AppError.operationNotAllowed("This goal has records and cannot be deleted.")
-        }
+        // Soft delete (archive): goals can be archived even if they have logs.
+        // Logs remain for stats/history.
         try await repo.deleteGoal(id: goalId)
     }
 }

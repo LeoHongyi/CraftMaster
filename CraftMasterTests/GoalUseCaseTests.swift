@@ -69,7 +69,7 @@ final class GoalUseCaseTests: XCTestCase {
          }
    }
 
-    func testDeleteGoal_whenHasLogs_throwsOperationNotAllowed() async throws {
+    func testArchiveGoal_whenHasLogs_archivesSuccessfully() async throws {
           let goalRepo = InMemoryGoalRepository()
           let logRepo = InMemoryLogRepository()
           let useCase = GoalUseCase(repo: goalRepo, logRepo: logRepo)
@@ -80,13 +80,11 @@ final class GoalUseCaseTests: XCTestCase {
           let log = LogEntry(goalId: goal.id, day: Date(), minutes: 30)
           await logRepo._debug_seed([log])
 
-          do {
-              try await useCase.delete(goalId: goal.id)
-              XCTFail("Expected error not thrown")
-          } catch {
-              XCTAssertEqual(error as? AppError,
-                             .operationNotAllowed("This goal has records and cannot be deleted."))
-          }
+          try await useCase.delete(goalId: goal.id)
+
+          let all = try await goalRepo.listGoals()
+          let updated = try XCTUnwrap(all.first(where: { $0.id == goal.id }))
+          XCTAssertTrue(updated.isArchived)
       }
 }
 

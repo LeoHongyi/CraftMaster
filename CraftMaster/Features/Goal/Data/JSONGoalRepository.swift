@@ -8,8 +8,9 @@
 import Foundation
 
 actor JSONGoalRepository: GoalRepository {
+
     private let fileURL: URL
-    private var logCountByGoalId: [UUID: Int] = [:]   // Day3 临时
+    private let currentSchema = 2
 
     init(filename: String = "goals.json") {
         let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -17,41 +18,66 @@ actor JSONGoalRepository: GoalRepository {
     }
 
     func listGoals() async throws -> [Goal] {
-        guard FileManager.default.fileExists(atPath: fileURL.path) else { return [] }
-        let data = try Data(contentsOf: fileURL)
-        let goals = try JSONDecoder().decode([Goal].self, from: data)
+        let goals = try loadAll()
         return goals.sorted { $0.createdAt > $1.createdAt }
     }
 
     func createGoal(title: String, targetHours: Int) async throws -> Goal {
         var goals = try await listGoals()
-        let new = Goal(title: title, targetHours: targetHours, createdAt: Date())
-        goals.insert(new, at: 0)
+        let newGoal = Goal(
+            title: title,
+            targetHours: targetHours,
+            createdAt: Date()
+        )
+        goals.insert(newGoal, at: 0)
         try persist(goals)
-        logCountByGoalId[new.id] = 0
-        return new
+        return newGoal
     }
 
     func updateGoal(_ goal: Goal) async throws {
-        var goals = try await listGoals()
+        var goals = try loadAll()
         guard let idx = goals.firstIndex(where: { $0.id == goal.id }) else { return }
         goals[idx] = goal
         try persist(goals)
     }
 
     func deleteGoal(id: UUID) async throws {
-        var goals = try await listGoals()
-        goals.removeAll { $0.id == id }
+        // Soft delete: archive only.
+        var goals = try loadAll()
+        guard let idx = goals.firstIndex(where: { $0.id == id }) else { return }
+        var archived = goals[idx]
+        archived.isArchived = true
+        goals[idx] = archived
         try persist(goals)
-        logCountByGoalId[id] = nil
     }
 
-    func logCount(goalId: UUID) async throws -> Int {
-        logCountByGoalId[goalId, default: 0]
+    // MARK: - persistence (v2 container + v1 fallback)
+    private func loadAll() throws -> [Goal] {
+        guard FileManager.default.fileExists(atPath: fileURL.path) else { return [] }
+        let data = try Data(contentsOf: fileURL)
+
+        // 1) v2: Persisted<[Goal]>
+        if let persisted = try? JSONDecoder().decode(Persisted<[Goal]>.self, from: data) {
+            return persisted.data
+        }
+
+        // 2) v1: raw [Goal] array (older files)
+        if let v1 = try? JSONDecoder().decode([Goal].self, from: data) {
+            // Write back as v2 to complete migration
+            try persistV2(v1)
+            return v1
+        }
+
+        throw AppError.unknown
     }
 
     private func persist(_ goals: [Goal]) throws {
-        let data = try JSONEncoder().encode(goals)
+        try persistV2(goals)
+    }
+
+    private func persistV2(_ goals: [Goal]) throws {
+        let wrapped = Persisted(schemaVersion: currentSchema, data: goals)
+        let data = try JSONEncoder().encode(wrapped)
         try data.write(to: fileURL, options: [.atomic])
     }
 }

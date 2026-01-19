@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LogStatsScreen: View {
     @EnvironmentObject private var app: AppState
+    @Environment(\.colorScheme) private var scheme
 
     @State private var streakBounce = false
     @State private var showFlamePop = false
@@ -14,18 +15,23 @@ struct LogStatsScreen: View {
    
 
     var body: some View {
-        List {
-            Section {
+        ScrollView {
+            VStack(spacing: PixelTheme.l) {
                 streakCard
-            }
 
-            Section("Summary") {
-                row("Today", "\(app.todayMinutes()) min")
-                row("This Week", "\(app.weekMinutes()) min")
-                row("Total", "\(app.totalMinutes()) min")
+                PixelCard {
+                    VStack(spacing: PixelTheme.s) {
+                        row("Today", "\(app.todayMinutes()) min")
+                        Divider().opacity(0.25)
+                        row("This Week", "\(app.weekMinutes()) min")
+                        Divider().opacity(0.25)
+                        row("Total", "\(app.totalMinutes()) min")
+                    }
+                }
             }
-           
+            .padding(PixelTheme.l)
         }
+        .background(PixelTheme.bg(scheme))
         .onAppear {
             lastStreak = app.currentStreak()
         }
@@ -63,55 +69,57 @@ struct LogStatsScreen: View {
     }
 
     private var streakCard: some View {
-       VStack(alignment: .leading, spacing: 10) {
-           HStack(spacing: 12) {
-               ZStack {
-                   if showFlamePop {
-                       Image(systemName: "flame.fill")
-                           .font(.system(size: 26))
-                           .symbolRenderingMode(.multicolor)
-                           .transition(.scale.combined(with: .opacity))
-                           .offset(y: -2)
-                   } else {
-                       Image(systemName: "flame")
-                           .font(.system(size: 26))
-                           .foregroundStyle(.orange)
-                   }
-               }
-               .frame(width: 34)
+        PixelCard {
+            VStack(alignment: .leading, spacing: PixelTheme.m) {
+                HStack(spacing: PixelTheme.m) {
+                    ZStack {
+                        if showFlamePop {
+                            Image(systemName: "flame.fill")
+                                .font(.system(size: 26))
+                                .symbolRenderingMode(.multicolor)
+                                .transition(.scale.combined(with: .opacity))
+                                .offset(y: -2)
+                        } else {
+                            Image(systemName: "flame")
+                                .font(.system(size: 26))
+                                .foregroundStyle(PixelTheme.accent(scheme))
+                        }
+                    }
+                    .frame(width: 34)
 
-               VStack(alignment: .leading, spacing: 4) {
-                   HStack(alignment: .firstTextBaseline, spacing: 8) {
-                       Text("Current Streak")
-                           .font(.headline)
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                            Text("Current Streak")
+                                .font(PixelTheme.titleFont())
 
-                       Text("\(app.currentStreak())")
-                           .font(.system(size: 28, weight: .bold, design: .rounded))
-                           .scaleEffect(streakBounce ? 1.15 : 1.0)
-                           .animation(.spring(response: 0.35, dampingFraction: 0.55), value: streakBounce)
+                            Text("\(app.currentStreak())")
+                                .font(PixelTheme.numberFont())
+                                .scaleEffect(streakBounce ? 1.15 : 1.0)
+                                .animation(.spring(response: 0.35, dampingFraction: 0.55), value: streakBounce)
 
-                       Text("day\(app.currentStreak() == 1 ? "" : "s")")
-                           .foregroundStyle(.secondary)
-                   }
+                            Text("day\(app.currentStreak() == 1 ? "" : "s")")
+                                .font(PixelTheme.bodyFont())
+                                .foregroundStyle(PixelTheme.secondaryText(scheme))
+                        }
 
-                   Text(streakSubtitle(app.currentStreak()))
-                       .font(.subheadline)
-                       .foregroundStyle(.secondary)
-               }
+                        Text(streakSubtitle(app.currentStreak()))
+                            .font(PixelTheme.bodyFont())
+                            .foregroundStyle(PixelTheme.secondaryText(scheme))
+                    }
 
-               Spacer()
-           }
+                    Spacer()
+                }
 
-           HStack {
-               Label("Best", systemImage: "trophy.fill")
-                   .foregroundStyle(.secondary)
-               Spacer()
-               Text("\(app.bestStreak()) days")
-                   .foregroundStyle(.secondary)
-           }
-           .font(.subheadline)
-       }
-       .padding(.vertical, 6)
+                HStack {
+                    Label("Best", systemImage: "trophy.fill")
+                        .foregroundStyle(PixelTheme.secondaryText(scheme))
+                    Spacer()
+                    Text("\(app.bestStreak()) days")
+                        .foregroundStyle(PixelTheme.secondaryText(scheme))
+                }
+                .font(PixelTheme.bodyFont())
+            }
+        }
    }
 
     private func streakSubtitle(_ s: Int) -> String {
@@ -140,9 +148,11 @@ struct LogStatsScreen: View {
 
     private func row(_ title: String, _ value: String) -> some View {
         HStack {
-            Text(title)
+            Text(title).font(PixelTheme.titleFont())
             Spacer()
-            Text(value).foregroundStyle(.secondary)
+            Text(value)
+                .font(PixelTheme.bodyFont())
+                .foregroundStyle(PixelTheme.secondaryText(scheme))
         }
     }
    

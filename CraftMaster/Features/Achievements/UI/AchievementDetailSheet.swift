@@ -46,7 +46,7 @@ struct AchievementDetailSheet: View {
                 Spacer()
             }
             .padding(PixelTheme.l)
-            .navigationTitle("Achievement")
+            .pixelNavigationTitle("Achievement")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     PixelButton("Close") { dismiss() }

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct EditLogView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var scheme
     let entry: LogEntry
     let onSave: (Int) -> Void
 
@@ -21,18 +22,44 @@ struct EditLogView: View {
     }
 
     var body: some View {
-        Form {
-            Section("Minutes") {
-                TextField("Minutes", text: $minutesText)
-                    .keyboardType(.numberPad)
-            }
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: PixelTheme.l) {
+                    PixelCard {
+                        VStack(alignment: .leading, spacing: PixelTheme.s) {
+                            Text("Minutes")
+                                .font(PixelTheme.bodyFont())
+                                .foregroundStyle(PixelTheme.secondaryText(scheme))
 
-            Button("Save") {
-                let minutes = Int(minutesText) ?? entry.minutes
-                onSave(minutes)
-                dismiss()
+                            TextField("Minutes", text: $minutesText)
+                                .keyboardType(.numberPad)
+                                .font(PixelTheme.titleFont())
+                                .textFieldStyle(.plain)
+                                .padding(.vertical, 6)
+                                .overlay(
+                                    Rectangle()
+                                        .fill(PixelTheme.border(scheme).opacity(0.6))
+                                        .frame(height: 2),
+                                    alignment: .bottom
+                                )
+                        }
+                    }
+
+                    PixelButton("Save") {
+                        let minutes = Int(minutesText) ?? entry.minutes
+                        onSave(minutes)
+                        dismiss()
+                    }
+                }
+                .padding(PixelTheme.l)
+            }
+            .background(PixelTheme.bg(scheme))
+            .pixelNavigationTitle("Edit Log")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
             }
         }
-        .navigationTitle("Edit Log")
     }
 }

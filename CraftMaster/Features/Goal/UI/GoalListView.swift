@@ -12,7 +12,7 @@ struct GoalListView: View {
     var body: some View {
         NavigationStack {
             content
-                .navigationTitle("Goals")
+                .pixelNavigationTitle("Goals")
                 .toolbar {
                     Button { showAdd = true } label: { Image(systemName: "plus") }
                 }

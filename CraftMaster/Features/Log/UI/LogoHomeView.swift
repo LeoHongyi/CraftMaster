@@ -39,7 +39,7 @@ struct LogHomeView: View {
                 case .stats: statsView
                 }
             }
-            .navigationTitle("Log")
+            .pixelNavigationTitle("Log")
         }
     }
 }

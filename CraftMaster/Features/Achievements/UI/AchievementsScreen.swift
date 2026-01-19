@@ -31,7 +31,7 @@ struct AchievementsScreen: View {
                 .padding(PixelTheme.l)
             }
             .background(PixelTheme.bg(colorScheme))
-            .navigationTitle("Achievements")
+            .pixelNavigationTitle("Achievements")
             .sheet(item: $selected) { item in
                 AchievementDetailSheet(item: item)
             }
