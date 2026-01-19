@@ -16,33 +16,45 @@ struct GoalListScreen: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(app.goals) { goal in
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(goal.title).font(.headline)
-                        Text("Target: \(goal.targetHours)h")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.vertical, 4)
-                    .contentShape(Rectangle())
-                    .onTapGesture { editingGoal = goal }
-                    .swipeActions {
-                        Button(role: .destructive) {
-                            Task {
-                                do { try await app.deleteGoal(id: goal.id) }
-                                catch { showError(error) }
+            Group {
+                if app.goals.isEmpty {
+                    ContentUnavailableView(
+                        "No Goals Yet",
+                        systemImage: "target",
+                        description: Text("Create a goal to start tracking and logging your time.")
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding()
+                } else {
+                    List {
+                        ForEach(app.goals) { goal in
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(goal.title).font(.headline)
+                                Text("Target: \(goal.targetHours)h")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
                             }
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
+                            .padding(.vertical, 4)
+                            .contentShape(Rectangle())
+                            .onTapGesture { editingGoal = goal }
+                            .swipeActions {
+                                Button(role: .destructive) {
+                                    Task {
+                                        do { try await app.deleteGoal(id: goal.id) }
+                                        catch { showError(error) }
+                                    }
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
 
-                        Button {
-                            editingGoal = goal
-                        } label: {
-                            Label("Edit", systemImage: "pencil")
+                                Button {
+                                    editingGoal = goal
+                                } label: {
+                                    Label("Edit", systemImage: "pencil")
+                                }
+                                .tint(.blue)
+                            }
                         }
-                        .tint(.blue)
                     }
                 }
             }

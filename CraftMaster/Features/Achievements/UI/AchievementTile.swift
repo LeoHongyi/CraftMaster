@@ -10,6 +10,7 @@ import SwiftUI
 struct AchievementTile: View {
     @Environment(\.colorScheme) private var scheme
     let item: AchievementViewData
+    let isHighlighted: Bool
 
     var body: some View {
         PixelCard(padding: PixelTheme.m) {
@@ -58,6 +59,13 @@ struct AchievementTile: View {
                     .allowsHitTesting(false)
             }
         }
+        .overlay(
+            PixelBorder()
+                .stroke(isHighlighted ? PixelTheme.accent(scheme) : PixelTheme.border(scheme),
+                        lineWidth: isHighlighted ? 4 : 2)
+        )
+        .scaleEffect(isHighlighted ? 1.03 : 1.0)
+        .animation(.spring(response: 0.35, dampingFraction: 0.65), value: isHighlighted)
     }
 
     private func format(_ date: Date) -> String {

@@ -1,0 +1,119 @@
+{
+  "" : {
+    "diagnostics" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/CraftMaster-primary.dia",
+    "emit-module-dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/CraftMaster-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/CraftMaster-primary-emit-module.dia",
+    "pch" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/CraftMaster-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/CraftMaster-primary.swiftdeps"
+  },
+  "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GeneratedAssetSymbols~partial.swiftmodule"
+  },
+  "/Users/leo/Desktop/ios_learning/CraftMaster/CraftMaster/ContentView.swift" : {
+    "const-values" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/ContentView.swiftconstvalues",
+    "dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/ContentView.d",
+    "diagnostics" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/ContentView.dia",
+    "index-unit-output-path" : "/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/ContentView.o",
+    "swift-dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/ContentView.swiftdeps",
+    "swiftmodule" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/ContentView~partial.swiftmodule"
+  },
+  "/Users/leo/Desktop/ios_learning/CraftMaster/CraftMaster/CraftMasterApp.swift" : {
+    "const-values" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/CraftMasterApp.swiftconstvalues",
+    "dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/CraftMasterApp.d",
+    "diagnostics" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/CraftMasterApp.dia",
+    "index-unit-output-path" : "/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/CraftMasterApp.o",
+    "llvm-bc" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/CraftMasterApp.bc",
+    "object" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/CraftMasterApp.o",
+    "swift-dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/CraftMasterApp.swiftdeps",
+    "swiftmodule" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/CraftMasterApp~partial.swiftmodule"
+  },
+  "/Users/leo/Desktop/ios_learning/CraftMaster/CraftMaster/Features/Goal/Data/InMemoryGoalRepository.swift" : {
+    "const-values" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/InMemoryGoalRepository.swiftconstvalues",
+    "dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/InMemoryGoalRepository.d",
+    "diagnostics" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/InMemoryGoalRepository.dia",
+    "index-unit-output-path" : "/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/InMemoryGoalRepository.o",
+    "llvm-bc" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/InMemoryGoalRepository.bc",
+    "object" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/InMemoryGoalRepository.o",
+    "swift-dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/InMemoryGoalRepository.swiftdeps",
+    "swiftmodule" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/InMemoryGoalRepository~partial.swiftmodule"
+  },
+  "/Users/leo/Desktop/ios_learning/CraftMaster/CraftMaster/Features/Goal/Domain/Goal.swift" : {
+    "const-values" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/Goal.swiftconstvalues",
+    "dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/Goal.d",
+    "diagnostics" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/Goal.dia",
+    "index-unit-output-path" : "/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/Goal.o",
+    "llvm-bc" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/Goal.bc",
+    "object" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/Goal.o",
+    "swift-dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/Goal.swiftdeps",
+    "swiftmodule" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/Goal~partial.swiftmodule"
+  },
+  "/Users/leo/Desktop/ios_learning/CraftMaster/CraftMaster/Features/Goal/Domain/GoalRepository.swift" : {
+    "const-values" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalRepository.swiftconstvalues",
+    "dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalRepository.d",
+    "diagnostics" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalRepository.dia",
+    "index-unit-output-path" : "/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalRepository.o",
+    "llvm-bc" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalRepository.bc",
+    "object" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalRepository.o",
+    "swift-dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalRepository.swiftdeps",
+    "swiftmodule" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalRepository~partial.swiftmodule"
+  },
+  "/Users/leo/Desktop/ios_learning/CraftMaster/CraftMaster/Features/Goal/Domain/GoalUseCase.swift" : {
+    "const-values" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalUseCase.swiftconstvalues",
+    "dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalUseCase.d",
+    "diagnostics" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalUseCase.dia",
+    "index-unit-output-path" : "/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalUseCase.o",
+    "llvm-bc" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalUseCase.bc",
+    "object" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalUseCase.o",
+    "swift-dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalUseCase.swiftdeps",
+    "swiftmodule" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalUseCase~partial.swiftmodule"
+  },
+  "/Users/leo/Desktop/ios_learning/CraftMaster/CraftMaster/Features/Goal/UI/AddGoalSheet.swift" : {
+    "const-values" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/AddGoalSheet.swiftconstvalues",
+    "dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/AddGoalSheet.d",
+    "diagnostics" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/AddGoalSheet.dia",
+    "index-unit-output-path" : "/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/AddGoalSheet.o",
+    "llvm-bc" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/AddGoalSheet.bc",
+    "object" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/AddGoalSheet.o",
+    "swift-dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/AddGoalSheet.swiftdeps",
+    "swiftmodule" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/AddGoalSheet~partial.swiftmodule"
+  },
+  "/Users/leo/Desktop/ios_learning/CraftMaster/CraftMaster/Features/Goal/UI/GoalListView.swift" : {
+    "const-values" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalListView.swiftconstvalues",
+    "dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalListView.d",
+    "diagnostics" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalListView.dia",
+    "index-unit-output-path" : "/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalListView.o",
+    "llvm-bc" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalListView.bc",
+    "object" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalListView.o",
+    "swift-dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalListView.swiftdeps",
+    "swiftmodule" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalListView~partial.swiftmodule"
+  },
+  "/Users/leo/Desktop/ios_learning/CraftMaster/CraftMaster/Features/Goal/UI/GoalListViewModel.swift" : {
+    "const-values" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalListViewModel.swiftconstvalues",
+    "dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalListViewModel.d",
+    "diagnostics" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalListViewModel.dia",
+    "index-unit-output-path" : "/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalListViewModel.o",
+    "llvm-bc" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalListViewModel.bc",
+    "object" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalListViewModel.o",
+    "swift-dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalListViewModel.swiftdeps",
+    "swiftmodule" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/GoalListViewModel~partial.swiftmodule"
+  },
+  "/Users/leo/Desktop/ios_learning/CraftMaster/CraftMaster/Shared/AppError.swift" : {
+    "const-values" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/AppError.swiftconstvalues",
+    "dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/AppError.d",
+    "diagnostics" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/AppError.dia",
+    "index-unit-output-path" : "/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/AppError.o",
+    "llvm-bc" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/AppError.bc",
+    "object" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/AppError.o",
+    "swift-dependencies" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/AppError.swiftdeps",
+    "swiftmodule" : "/Users/leo/Desktop/ios_learning/CraftMaster/.derivedData/Build/Intermediates.noindex/CraftMaster.build/Debug-iphoneos/CraftMaster.build/Objects-normal/arm64/AppError~partial.swiftmodule"
+  }
+}

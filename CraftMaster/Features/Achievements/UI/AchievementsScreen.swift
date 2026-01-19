@@ -24,8 +24,8 @@ struct AchievementsScreen: View {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: PixelTheme.m) {
                     ForEach(viewData) { item in
-                        AchievementTile(item: item)
-                            .onTapGesture { selected = item }
+                       AchievementTile(item: item, isHighlighted: app.highlightAchievementId == item.id)
+                           .onTapGesture { selected = item }
                     }
                 }
                 .padding(PixelTheme.l)

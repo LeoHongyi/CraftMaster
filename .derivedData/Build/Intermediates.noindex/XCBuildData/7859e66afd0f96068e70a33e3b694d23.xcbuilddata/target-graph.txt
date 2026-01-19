@@ -1,0 +1,2 @@
+Target dependency graph (1 target)
+Target 'CraftMaster' in project 'CraftMaster' (no dependencies)

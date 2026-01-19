@@ -16,7 +16,9 @@ final class AppState: ObservableObject {
     @Published private(set) var goals: [Goal] = []
     @Published private(set) var logs: [LogEntry] = []
     @Published private(set) var unlockedAchievements: [AchievementUnlock] = []
-    @Published private(set) var lastUnlocked: AchievementUnlock?   // 用于弹窗反馈（Week3 Day4）
+    @Published private(set) var lastUnlocked: AchievementUnlock?
+    @Published var pendingAchievementToasts: [AchievementDefinition] = []
+    @Published var highlightAchievementId: String?
 
     // 依赖（Data/Domain）
     private let goalRepo: GoalRepository
@@ -92,6 +94,15 @@ final class AppState: ObservableObject {
        do {
            try await achievementRepo.saveUnlocked(merged)
            unlockedAchievements = merged
+           // 追加要弹出的成就（按 catalog 顺序或 unlock 顺序都行）
+           let newIds = Set(newUnlocks.map { $0.id })
+           let defsToToast = AchievementCatalog.all.filter { newIds.contains($0.id) }
+
+           // 避免重复入队：如果队列里已有该 id，就不再加
+           let queuedIds = Set(pendingAchievementToasts.map { $0.id })
+           let append = defsToToast.filter { !queuedIds.contains($0.id) }
+
+           pendingAchievementToasts.append(contentsOf: append)
            lastUnlocked = newUnlocks.last
        } catch {
            print("saveUnlocked error:", error)
