@@ -43,6 +43,10 @@ struct DebugPanelView: View {
                     Button("Seed 20k Logs (Stress)") {
                         app.debugSeedMassiveLogs(count: 20_000)
                     }
+
+                    Button("Clear AI Cache") {
+                        app.debugClearAICache()
+                    }
                 }
 
                 Section("Milestones") {

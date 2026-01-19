@@ -26,6 +26,7 @@ final class AppState: ObservableObject {
     @Published var presentableError: PresentableError?
     @Published private(set) var isReady: Bool = false
     @Published private(set) var latestInsight: AIInsight?
+    @Published private(set) var aiStatus: AIInsightStatus = .idle
     private let aiUseCase: AIInsightUseCase
     private let aiCacheRepo = AIInsightCacheRepository()
 
@@ -55,36 +56,54 @@ final class AppState: ObservableObject {
         self.aiUseCase = AIInsightUseCase(repo: aiRepo)
     }
    
-      func maybeGenerateInsight() async {
-        guard let goal = goals.first else { return }
+   func maybeGenerateInsight() async {
+       guard let goal = goals.first else {
+           aiStatus = .unavailable("Create a goal to get coaching.")
+           return
+       }
 
-        let input = AIInsightInput(
-            totalMinutes: stats.totalMinutes,
-            currentStreak: stats.currentStreak,
-            bestStreak: stats.bestStreak,
-            last7DaysMinutes: stats.weekMinutes,
-            goalTitle: goal.title
-        )
+       let input = AIInsightInput(
+           totalMinutes: stats.totalMinutes,
+           currentStreak: stats.currentStreak,
+           bestStreak: stats.bestStreak,
+           last7DaysMinutes: stats.weekMinutes,
+           goalTitle: goal.title
+       )
 
-        do {
-            let insight = try await aiUseCase.generateIfNeeded(
-                  input: input,
-                  lastGeneratedAt: latestInsight?.generatedAt
-              )
-              if let insight {
-                  latestInsight = insight
-              }
-              let today = Calendar.current.startOfDay(for: Date())
-              if let insight {
-                  try? await aiCacheRepo.save(
-                      CachedAIInsight(insight: insight, day: today)
-                  )
-              }
-          } catch {
-              #if DEBUG
-              print("AI insight error:", error)
-              #endif
-        }
+       aiStatus = .loading
+
+       do {
+           let insight = try await aiUseCase.generateIfNeeded(
+               input: input,
+               lastGeneratedAt: latestInsight?.generatedAt
+           )
+
+           if let insight {
+               latestInsight = insight
+               aiStatus = .ready(insight)
+
+               let today = Calendar.current.startOfDay(for: Date())
+               try? await aiCacheRepo.save(CachedAIInsight(insight: insight, day: today))
+           } else {
+               // gating 不让生成（例如总分钟 < 60 或今天已生成过）
+               if let cached = latestInsight {
+                   aiStatus = .ready(cached)
+               } else if stats.totalMinutes < 60 {
+                   aiStatus = .unavailable("Log at least 60 minutes to unlock AI coaching.")
+               } else {
+                   aiStatus = .unavailable("Coaching is available once per day.")
+               }
+           }
+       } catch {
+           #if DEBUG
+           print("AI insight error:", error)
+           #endif
+           if let cached = latestInsight {
+               aiStatus = .ready(cached)
+           } else {
+               aiStatus = .failed("Coach is unavailable right now.")
+           }
+       }
    }
 
     // MARK: - Load
@@ -127,7 +146,8 @@ final class AppState: ObservableObject {
                let cal = Calendar.current
                let today = cal.startOfDay(for: Date())
                if cal.isDate(cached.day, inSameDayAs: today) {
-                   latestInsight = cached.insight
+                  latestInsight = cached.insight
+                  aiStatus = .ready(cached.insight)
                }
            }
        } catch {
@@ -465,6 +485,18 @@ final class AppState: ObservableObject {
    }
 }
 
+#if DEBUG
+extension AppState {
+    func debugClearAICache() {
+        Task {
+            try? await aiCacheRepo.clear()
+            latestInsight = nil
+            aiStatus = .idle
+        }
+    }
+}
+#endif
+
 extension AppState {
    func debugUpsertLog(daysAgo: Int, minutes: Int = 10) {
        guard let gid = goals.first?.id else { return }
@@ -523,6 +555,13 @@ extension AppState {
         debugSeedStreak(days: milestone, minutes: 10)
     }
    
+   enum AIInsightStatus: Equatable {
+       case idle
+       case loading
+       case ready(AIInsight)
+       case unavailable(String) // 不满足条件/被 gating 拦住等
+       case failed(String)      // 真失败（网络/解析）
+   }
    private func mapToPresentable(_ error: AppError) -> PresentableError? {
        switch error {
        case .userFacing(let uf):

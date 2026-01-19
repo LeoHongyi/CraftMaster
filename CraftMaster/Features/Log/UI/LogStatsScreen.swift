@@ -17,6 +17,10 @@ struct LogStatsScreen: View {
     var body: some View {
         ScrollView {
             VStack(spacing: PixelTheme.l) {
+                AICoachCard(status: app.aiStatus) {
+                    Task { await app.maybeGenerateInsight() }
+                }
+
                 streakCard
 
                 PixelCard {
