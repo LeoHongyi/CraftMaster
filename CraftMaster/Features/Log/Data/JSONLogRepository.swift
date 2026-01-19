@@ -22,6 +22,20 @@ actor JSONLogRepository: LogRepository {
         return filtered.sorted { $0.day > $1.day }
     }
 
+    private func normalizeDays(_ logs: [LogEntry]) -> [LogEntry] {
+        let cal = Calendar.current
+        return logs.map { entry in
+            LogEntry(
+                id: entry.id,
+                goalId: entry.goalId,
+                day: cal.startOfDay(for: entry.day),
+                minutes: entry.minutes,
+                createdAt: entry.createdAt,
+                updatedAt: entry.updatedAt
+            )
+        }
+    }
+
     func upsertLog(goalId: UUID, day: Date, minutes: Int) async throws -> LogEntry {
         var logs = try loadAll()
         let normalizedDay = Calendar.current.startOfDay(for: day)
@@ -60,12 +74,12 @@ actor JSONLogRepository: LogRepository {
         // 1) 先尝试 v2：Persisted<[LogEntry]>
         if let persisted = try? JSONDecoder().decode(Persisted<[LogEntry]>.self, from: data) {
             // 如果未来遇到 schemaVersion > currentSchema，可以在这里决定降级/忽略
-            return persisted.data
+           return normalizeDays(persisted.data)
         }
 
         // 2) 尝试 v1：旧格式直接是 [LogEntryV1]
         if let v1 = try? JSONDecoder().decode([LogEntryV1].self, from: data) {
-            let migrated = migrateFromV1(v1)
+            let migrated = normalizeDays(migrateFromV1(v1))
             // 写回成 v2 格式，完成升级
             try persistV2(migrated)
             return migrated

@@ -56,6 +56,14 @@ struct DebugPanelView: View {
                     row("Week Minutes", "\(app.weekMinutes())")
                     row("Total Minutes", "\(app.totalMinutes())")
                 }
+               
+               Section("Date Edge Tests") {
+                   Button("Log Today") { app.debugUpsertLog(daysAgo: 0, minutes: 10) }
+                   Button("Log Yesterday") { app.debugUpsertLog(daysAgo: 1, minutes: 10) }
+                   Button("Log 6 days ago") { app.debugUpsertLog(daysAgo: 6, minutes: 10) }
+                   Button("Log 7 days ago") { app.debugUpsertLog(daysAgo: 7, minutes: 10) }
+                   Button("Log 30 days ago") { app.debugUpsertLog(daysAgo: 30, minutes: 10) }
+               }
             }
             .pixelNavigationTitle("Debug Panel")
             .toolbar {

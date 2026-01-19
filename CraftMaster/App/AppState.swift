@@ -240,25 +240,27 @@ final class AppState: ObservableObject {
    private func recomputeStats(from logs: [LogEntry]) {
        let cal = Calendar.current
        let today = cal.startOfDay(for: Date())
+       let weekInterval = cal.dateInterval(of: .weekOfYear, for: today)
 
        var total = 0
        var todaySum = 0
        var weekSum = 0
 
        var days = Set<Date>()
+       
 
        for log in logs {
            total += log.minutes
 
            let day = cal.startOfDay(for: log.day)
            days.insert(day)
+            
+           if let interval = weekInterval, interval.contains(day) {
+               weekSum += log.minutes
+           }
 
            if cal.isDate(day, inSameDayAs: today) {
                todaySum += log.minutes
-           }
-
-           if cal.isDate(day, equalTo: today, toGranularity: .weekOfYear) {
-               weekSum += log.minutes
            }
        }
 
@@ -275,16 +277,20 @@ final class AppState: ObservableObject {
    }
    
    private func computeCurrentStreak(from days: Set<Date>, today: Date) -> Int {
-       let cal = Calendar.current
-       guard days.contains(today) else { return 0 }
+      let cal = Calendar.current
+      guard days.contains(today) else { return 0 }
 
-       var streak = 0
-       var cursor = today
-       while days.contains(cursor) {
-           streak += 1
-           cursor = cal.date(byAdding: .day, value: -1, to: cursor)!
-       }
-       return streak
+      var streak = 0
+      var cursor = today
+
+      // 安全阈值：最多回溯 3650 天（10 年）
+      for _ in 0..<3650 {
+          guard days.contains(cursor) else { break }
+          streak += 1
+          cursor = cal.date(byAdding: .day, value: -1, to: cursor)!
+      }
+
+      return streak
    }
 
    private func computeBestStreak(from days: Set<Date>) -> Int {
@@ -314,6 +320,15 @@ final class AppState: ObservableObject {
 
 #if DEBUG
 extension AppState {
+   func debugUpsertLog(daysAgo: Int, minutes: Int = 10) {
+       guard let gid = goals.first?.id else { return }
+       let cal = Calendar.current
+       let day = cal.date(byAdding: .day, value: -daysAgo, to: Date())!
+       Task {
+           try? await upsertLog(goalId: gid, day: day, minutes: minutes)
+       }
+   }
+    
     func debugReloadAll() {
         Task { await reloadAll() }
     }
