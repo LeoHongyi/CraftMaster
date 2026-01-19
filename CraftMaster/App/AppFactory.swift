@@ -10,7 +10,7 @@ enum AppFactory {
         let achievementRepo = JSONAchievementRepository()
         let appState = AppState(goalRepo: goalRepo, logRepo: logRepo, achievementRepo: achievementRepo)
 
-        return RootTabView()
+        return RootEntryView()
             .environmentObject(appState)
             .onAppear { appState.loadAll() }
     }

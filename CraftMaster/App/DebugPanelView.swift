@@ -39,6 +39,12 @@ struct DebugPanelView: View {
                     }
                 }
 
+                Section("Stress") {
+                    Button("Seed 20k Logs (Stress)") {
+                        app.debugSeedMassiveLogs(count: 20_000)
+                    }
+                }
+
                 Section("Milestones") {
                     HStack {
                         Button("3") { app.debugSeedMilestone(3) }

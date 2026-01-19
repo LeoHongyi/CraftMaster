@@ -86,7 +86,17 @@ actor JSONGoalRepository: GoalRepository {
     // MARK: - persistence (v2 container + v1 fallback)
     private func loadAll() throws -> [Goal] {
         guard FileManager.default.fileExists(atPath: fileURL.path) else { return [] }
-        let data = try Data(contentsOf: fileURL)
+        let data: Data
+        do {
+            data = try Data(contentsOf: fileURL)
+        } catch {
+            let ns = error as NSError
+            if ns.domain == NSCocoaErrorDomain && ns.code == NSFileNoSuchFileError {
+                // File got removed between exists-check and read (or system cleared it).
+                return []
+            }
+            throw error
+        }
 
         // 1) v2: Persisted<[Goal]>
         if let persisted = try? JSONDecoder().decode(Persisted<[Goal]>.self, from: data) {
@@ -110,6 +120,15 @@ actor JSONGoalRepository: GoalRepository {
     private func persistV2(_ goals: [Goal]) throws {
         let wrapped = Persisted(schemaVersion: currentSchema, data: goals)
         let data = try JSONEncoder().encode(wrapped)
+
+        // Validate decodability before doing an atomic write (avoid persisting corrupted data).
+        _ = try JSONDecoder().decode(Persisted<[Goal]>.self, from: data)
+
+        // Ensure directory exists (defensive; Documents should exist, but keep it robust).
+        try FileManager.default.createDirectory(
+            at: fileURL.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
         try data.write(to: fileURL, options: [.atomic])
     }
 }

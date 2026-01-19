@@ -30,6 +30,7 @@ struct LogTodayScreen: View {
                             .foregroundStyle(PixelTheme.secondaryText(scheme))
 
                         Picker("Select", selection: $selectedGoalId) {
+                            Text("Select a goal").tag(Optional<UUID>.none)
                             ForEach(app.goals) { g in
                                 Text(g.title).tag(Optional(g.id))
                             }

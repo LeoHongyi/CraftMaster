@@ -19,6 +19,7 @@ struct LogTodayView: View {
             Form {
                 Section("Goal") {
                     Picker("Select", selection: $vm.selectedGoalId) {
+                        Text("Select a goal").tag(Optional<UUID>.none)
                         ForEach(vm.goals) { g in
                             Text(g.title).tag(Optional(g.id))
                         }

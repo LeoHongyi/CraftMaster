@@ -24,6 +24,10 @@ final class AppState: ObservableObject {
     @Published var highlightAchievementId: String?
     @Published private(set) var stats: StatsCache = .init()
     @Published var presentableError: PresentableError?
+    @Published private(set) var isReady: Bool = false
+    @Published private(set) var latestInsight: AIInsight?
+    private let aiUseCase: AIInsightUseCase
+    private let aiCacheRepo = AIInsightCacheRepository()
 
     private func debugLog(_ error: any Error) {
 #if DEBUG
@@ -39,13 +43,49 @@ final class AppState: ObservableObject {
     private let achievementRepo: AchievementRepository
     private let achievementEngine = AchievementEngine()
 
-    init(goalRepo: GoalRepository, logRepo: LogRepository, achievementRepo: AchievementRepository) {
+   init(goalRepo: GoalRepository,
+        logRepo: LogRepository,
+        achievementRepo: AchievementRepository,
+        aiRepo: AIRepository = LocalAIRepository()) {
         self.goalRepo = goalRepo
         self.logRepo = logRepo
         self.goalUseCase = GoalUseCase(repo: goalRepo, logRepo: logRepo)
         self.logUseCase = LogUseCase(repo: logRepo)
         self.achievementRepo = achievementRepo
+        self.aiUseCase = AIInsightUseCase(repo: aiRepo)
     }
+   
+      func maybeGenerateInsight() async {
+        guard let goal = goals.first else { return }
+
+        let input = AIInsightInput(
+            totalMinutes: stats.totalMinutes,
+            currentStreak: stats.currentStreak,
+            bestStreak: stats.bestStreak,
+            last7DaysMinutes: stats.weekMinutes,
+            goalTitle: goal.title
+        )
+
+        do {
+            let insight = try await aiUseCase.generateIfNeeded(
+                  input: input,
+                  lastGeneratedAt: latestInsight?.generatedAt
+              )
+              if let insight {
+                  latestInsight = insight
+              }
+              let today = Calendar.current.startOfDay(for: Date())
+              if let insight {
+                  try? await aiCacheRepo.save(
+                      CachedAIInsight(insight: insight, day: today)
+                  )
+              }
+          } catch {
+              #if DEBUG
+              print("AI insight error:", error)
+              #endif
+        }
+   }
 
     // MARK: - Load
     func loadAll() {
@@ -53,13 +93,49 @@ final class AppState: ObservableObject {
     }
 
     func reloadAll() async {
-       async let g: Void = loadGoals()
-       async let l: Void = loadLogs()
-       async let a: Void = loadAchievements()
-       await g
-       await l
-       await a
+        // Only show the loading gate during the very first bootstrap.
+        // After the app is ready, background reloads should not flip the whole UI back to loading.
+        let shouldGate = (isReady == false)
+        let start = Date()
+
+        if shouldGate {
+            isReady = false
+        }
+
+        async let g: Void = loadGoals()
+        async let l: Void = loadLogs()
+        async let a: Void = loadAchievements()
+
+        _ = await (g, l, a)
+
+        if shouldGate {
+            // Ensure the loading screen is visible long enough to be perceived.
+            let minVisible: TimeInterval = 0.8
+            let elapsed = Date().timeIntervalSince(start)
+            if elapsed < minVisible {
+                let remaining = UInt64((minVisible - elapsed) * 1_000_000_000)
+                try? await Task.sleep(nanoseconds: remaining)
+            }
+            await loadCachedInsight()
+            isReady = true
+        }
     }
+   
+   private func loadCachedInsight() async {
+       do {
+           if let cached = try await aiCacheRepo.load() {
+               let cal = Calendar.current
+               let today = cal.startOfDay(for: Date())
+               if cal.isDate(cached.day, inSameDayAs: today) {
+                   latestInsight = cached.insight
+               }
+           }
+       } catch {
+           #if DEBUG
+           print("AI cache load error:", error)
+           #endif
+       }
+   }
 
     func loadGoals() async {
         do {
@@ -90,6 +166,7 @@ final class AppState: ObservableObject {
        }
 
        await evaluateAchievementsAfterLogsChanged()
+       await maybeGenerateInsight()
     }
    
    private func evaluateAchievementsAfterLogsChanged() async {
@@ -471,3 +548,26 @@ extension AppState {
    }
    
 }
+
+#if DEBUG
+extension AppState {
+    /// Stress-seed a large amount of logs for performance testing.
+    /// Writes directly to `logRepo` and refreshes once at the end (much faster than calling `upsertLog` repeatedly).
+    func debugSeedMassiveLogs(count: Int = 20_000) {
+        guard let gid = goals.first?.id else { return }
+
+        Task {
+            let cal = Calendar.current
+            for i in 0..<count {
+                let day = cal.date(byAdding: .day, value: -(i % 365), to: Date())!
+                _ = try? await logRepo.upsertLog(
+                    goalId: gid,
+                    day: day,
+                    minutes: Int.random(in: 5...60)
+                )
+            }
+            await loadLogs()
+        }
+    }
+}
+#endif

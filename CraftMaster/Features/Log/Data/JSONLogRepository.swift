@@ -101,7 +101,17 @@ actor JSONLogRepository: LogRepository {
     // MARK: - persistence
     private func loadAll() throws -> [LogEntry] {
         guard FileManager.default.fileExists(atPath: fileURL.path) else { return [] }
-        let data = try Data(contentsOf: fileURL)
+        let data: Data
+        do {
+            data = try Data(contentsOf: fileURL)
+        } catch {
+            let ns = error as NSError
+            if ns.domain == NSCocoaErrorDomain && ns.code == NSFileNoSuchFileError {
+                // File got removed between exists-check and read (or system cleared it).
+                return []
+            }
+            throw error
+        }
 
         // 1) 先尝试 v2：Persisted<[LogEntry]>
         if let persisted = try? JSONDecoder().decode(Persisted<[LogEntry]>.self, from: data) {
@@ -142,6 +152,15 @@ actor JSONLogRepository: LogRepository {
    private func persistV2(_ logs: [LogEntry]) throws {
        let wrapped = Persisted(schemaVersion: currentSchema, data: logs)
        let data = try JSONEncoder().encode(wrapped)
+
+       // Validate decodability before doing an atomic write (avoid persisting corrupted data).
+       _ = try JSONDecoder().decode(Persisted<[LogEntry]>.self, from: data)
+
+       // Ensure directory exists (defensive; Documents should exist, but keep it robust).
+       try FileManager.default.createDirectory(
+           at: fileURL.deletingLastPathComponent(),
+           withIntermediateDirectories: true
+       )
        try data.write(to: fileURL, options: [.atomic])
    }
    
