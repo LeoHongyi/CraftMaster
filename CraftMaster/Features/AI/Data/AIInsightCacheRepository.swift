@@ -16,14 +16,26 @@ actor AIInsightCacheRepository {
         self.fileURL = dir.appendingPathComponent(filename)
     }
 
-    func load() async throws -> CachedAIInsight? {
+    func load() async throws -> CachedAICoachReport? {
         guard FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
-        let data = try Data(contentsOf: fileURL)
-        return try JSONDecoder().decode(CachedAIInsight.self, from: data)
+        let data: Data
+        do {
+            data = try Data(contentsOf: fileURL)
+        } catch {
+            let ns = error as NSError
+            if ns.domain == NSCocoaErrorDomain && ns.code == NSFileNoSuchFileError { return nil }
+            throw error
+        }
+        return try JSONDecoder().decode(CachedAICoachReport.self, from: data)
     }
 
-    func save(_ cached: CachedAIInsight) async throws {
+    func save(_ cached: CachedAICoachReport) async throws {
         let data = try JSONEncoder().encode(cached)
+        _ = try JSONDecoder().decode(CachedAICoachReport.self, from: data)
+        try FileManager.default.createDirectory(
+            at: fileURL.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
         try data.write(to: fileURL, options: [.atomic])
     }
 

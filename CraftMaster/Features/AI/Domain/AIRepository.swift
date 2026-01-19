@@ -8,5 +8,5 @@
 import Foundation
 
 protocol AIRepository {
-    func generateInsight(input: AIInsightInput) async throws -> AIInsight
+   func generateReport(input: AIInsightInput) async throws -> AICoachReport
 }

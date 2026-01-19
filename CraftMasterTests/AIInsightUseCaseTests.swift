@@ -12,7 +12,7 @@ final class AIInsightUseCaseTests: XCTestCase {
 
     func testGenerateIfNeeded_doesNotCallAI_whenTotalMinutesTooLow() async throws {
         let mock = MockAIRepository()
-        let useCase = AIInsightUseCase(repo: mock)
+        let useCase = AICoachUseCase(repo: mock)
 
         let input = AIInsightInput(
             totalMinutes: 30, // < 60
@@ -28,11 +28,12 @@ final class AIInsightUseCaseTests: XCTestCase {
         )
 
         XCTAssertNil(result)
+        XCTAssertFalse(mock.called)
     }
 
     func testGenerateIfNeeded_callsAI_whenEligible() async throws {
         let mock = MockAIRepository()
-        let useCase = AIInsightUseCase(repo: mock)
+        let useCase = AICoachUseCase(repo: mock)
 
         let input = AIInsightInput(
             totalMinutes: 120,
@@ -48,5 +49,6 @@ final class AIInsightUseCaseTests: XCTestCase {
         )
 
         XCTAssertNotNil(result)
+        XCTAssertTrue(mock.called)
     }
 }

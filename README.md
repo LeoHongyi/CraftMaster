@@ -51,8 +51,8 @@ The project is structured by feature areas under `CraftMaster/Features/`:
   - Data: `JSONAchievementRepository`, `InMemoryAchievementRepository`
   - UI: achievements grid and detail UI
 
-- **AI (local placeholder)**
-  - Domain: `AIRepository`, `AIInsightUseCase`, `AIInsight`, `AIInsightInput`
+- **AI Coach (local placeholder)**
+  - Domain: `AIRepository`, `AICoachUseCase`, `AICoachReport`, `AICoachAdvice`, `AIInsightInput`
   - Data: `LocalAIRepository` (no network; purely local logic), `AIInsightCacheRepository`
   - Used to produce “coach-like” summaries when enough progress exists (e.g. minimum minutes threshold, once-per-day generation rules).
 
@@ -72,7 +72,7 @@ CraftMaster follows a clean, testable layering:
   - Centralized **error mapping** to `PresentableError` for UI alerts.
 
 - **Use Cases**
-  - Encapsulate domain rules and validation (`GoalUseCase`, `LogUseCase`, `AIInsightUseCase`).
+  - Encapsulate domain rules and validation (`GoalUseCase`, `LogUseCase`, `AICoachUseCase`).
   - Keep UI logic thin and repositories focused on persistence.
 
 - **Repositories**

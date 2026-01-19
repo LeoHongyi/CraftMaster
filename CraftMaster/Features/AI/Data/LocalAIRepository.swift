@@ -9,24 +9,21 @@ import Foundation
 
 struct LocalAIRepository: AIRepository {
 
-    func generateInsight(input: AIInsightInput) async throws -> AIInsight {
+    private let engine = LocalAdviceEngine()
+
+    func generateReport(input: AIInsightInput) async throws -> AICoachReport {
         let summary = """
-        You've logged \(input.totalMinutes) minutes so far.
-        Your current streak is \(input.currentStreak) days.
+        Quest: \(input.goalTitle)
+        Total: \(input.totalMinutes) min
+        Streak: \(input.currentStreak) (best \(input.bestStreak))
+        Last 7 days: \(input.last7DaysMinutes) min
         """
 
-        let suggestion: String
-        if input.currentStreak == 0 {
-            suggestion = "Start today with a short session to build momentum."
-        } else if input.currentStreak < 7 {
-            suggestion = "Try to keep your streak going tomorrow."
-        } else {
-            suggestion = "Amazing consistency! Consider increasing difficulty."
-        }
+        let advice = engine.makeAdvice(input: input)
 
-        return AIInsight(
+        return AICoachReport(
             summary: summary,
-            suggestion: suggestion,
+            advice: advice,
             generatedAt: Date()
         )
     }

@@ -10,7 +10,7 @@ import SwiftUI
 struct AICoachCard: View {
     @Environment(\.colorScheme) private var scheme
 
-    let status: AppState.AIInsightStatus
+    let status: AppState.AICoachStatus
     let onRefresh: () -> Void
 
     @State private var expanded: Bool = true
@@ -25,8 +25,8 @@ struct AICoachCard: View {
                 case .idle, .loading:
                     loadingView
 
-                case .ready(let insight):
-                    insightView(insight)
+                case .ready(let report):
+                    reportView(report)
 
                 case .unavailable(let msg):
                     infoView(title: "Coach Locked", message: msg, icon: "lock.fill")
@@ -95,21 +95,32 @@ struct AICoachCard: View {
         }
     }
 
-    private func insightView(_ insight: AIInsight) -> some View {
+    private func reportView(_ report: AICoachReport) -> some View {
         Group {
             if expanded {
                 VStack(alignment: .leading, spacing: PixelTheme.s) {
                     sectionTitle("Summary")
-                    Text(insight.summary)
+                    Text(report.summary)
                         .font(PixelTheme.bodyFont())
                         .foregroundStyle(PixelTheme.secondaryText(scheme))
 
-                    sectionTitle("Next Step")
-                    Text(insight.suggestion)
+                    sectionTitle("Tomorrow Plan")
+                    Text("• \(report.advice.tomorrowMinutes) minutes")
+                        .font(PixelTheme.bodyFont())
+                        .foregroundStyle(PixelTheme.secondaryText(scheme))
+                    Text("• Intensity: \(report.advice.intensity.rawValue)")
+                        .font(PixelTheme.bodyFont())
+                        .foregroundStyle(PixelTheme.secondaryText(scheme))
+                    Text("• Focus: \(report.advice.focus)")
                         .font(PixelTheme.bodyFont())
                         .foregroundStyle(PixelTheme.secondaryText(scheme))
 
-                    Text("Updated \(format(insight.generatedAt))")
+                    sectionTitle("Coach Note")
+                    Text(report.advice.coachNote)
+                        .font(PixelTheme.bodyFont())
+                        .foregroundStyle(PixelTheme.secondaryText(scheme))
+
+                    Text("Updated \(format(report.generatedAt))")
                         .font(.caption.monospaced())
                         .foregroundStyle(PixelTheme.secondaryText(scheme))
                         .padding(.top, 4)
@@ -117,6 +128,8 @@ struct AICoachCard: View {
             }
         }
     }
+
+    // (Advice rendering is inlined in `reportView` to match the pixel-bullet style.)
 
     private func infoView(title: String, message: String, icon: String) -> some View {
         Group {

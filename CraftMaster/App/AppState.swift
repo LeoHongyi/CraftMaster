@@ -25,9 +25,9 @@ final class AppState: ObservableObject {
     @Published private(set) var stats: StatsCache = .init()
     @Published var presentableError: PresentableError?
     @Published private(set) var isReady: Bool = false
-    @Published private(set) var latestInsight: AIInsight?
-    @Published private(set) var aiStatus: AIInsightStatus = .idle
-    private let aiUseCase: AIInsightUseCase
+    @Published private(set) var latestReport: AICoachReport?
+    @Published private(set) var aiStatus: AICoachStatus = .idle
+    private let aiUseCase: AICoachUseCase
     private let aiCacheRepo = AIInsightCacheRepository()
 
     private func debugLog(_ error: any Error) {
@@ -53,7 +53,7 @@ final class AppState: ObservableObject {
         self.goalUseCase = GoalUseCase(repo: goalRepo, logRepo: logRepo)
         self.logUseCase = LogUseCase(repo: logRepo)
         self.achievementRepo = achievementRepo
-        self.aiUseCase = AIInsightUseCase(repo: aiRepo)
+        self.aiUseCase = AICoachUseCase(repo: aiRepo)
     }
    
    func maybeGenerateInsight() async {
@@ -73,20 +73,20 @@ final class AppState: ObservableObject {
        aiStatus = .loading
 
        do {
-           let insight = try await aiUseCase.generateIfNeeded(
+           let report = try await aiUseCase.generateIfNeeded(
                input: input,
-               lastGeneratedAt: latestInsight?.generatedAt
+               lastGeneratedAt: latestReport?.generatedAt
            )
 
-           if let insight {
-               latestInsight = insight
-               aiStatus = .ready(insight)
+           if let report {
+               latestReport = report
+               aiStatus = .ready(report)
 
                let today = Calendar.current.startOfDay(for: Date())
-               try? await aiCacheRepo.save(CachedAIInsight(insight: insight, day: today))
+               try? await aiCacheRepo.save(CachedAICoachReport(report: report, day: today))
            } else {
                // gating 不让生成（例如总分钟 < 60 或今天已生成过）
-               if let cached = latestInsight {
+               if let cached = latestReport {
                    aiStatus = .ready(cached)
                } else if stats.totalMinutes < 60 {
                    aiStatus = .unavailable("Log at least 60 minutes to unlock AI coaching.")
@@ -98,7 +98,7 @@ final class AppState: ObservableObject {
            #if DEBUG
            print("AI insight error:", error)
            #endif
-           if let cached = latestInsight {
+           if let cached = latestReport {
                aiStatus = .ready(cached)
            } else {
                aiStatus = .failed("Coach is unavailable right now.")
@@ -135,19 +135,19 @@ final class AppState: ObservableObject {
                 let remaining = UInt64((minVisible - elapsed) * 1_000_000_000)
                 try? await Task.sleep(nanoseconds: remaining)
             }
-            await loadCachedInsight()
+            await loadCachedReport()
             isReady = true
         }
     }
    
-   private func loadCachedInsight() async {
+   private func loadCachedReport() async {
        do {
            if let cached = try await aiCacheRepo.load() {
                let cal = Calendar.current
                let today = cal.startOfDay(for: Date())
                if cal.isDate(cached.day, inSameDayAs: today) {
-                  latestInsight = cached.insight
-                  aiStatus = .ready(cached.insight)
+                  latestReport = cached.report
+                  aiStatus = .ready(cached.report)
                }
            }
        } catch {
@@ -490,7 +490,7 @@ extension AppState {
     func debugClearAICache() {
         Task {
             try? await aiCacheRepo.clear()
-            latestInsight = nil
+            latestReport = nil
             aiStatus = .idle
         }
     }
@@ -555,10 +555,10 @@ extension AppState {
         debugSeedStreak(days: milestone, minutes: 10)
     }
    
-   enum AIInsightStatus: Equatable {
+   enum AICoachStatus: Equatable {
        case idle
        case loading
-       case ready(AIInsight)
+       case ready(AICoachReport)
        case unavailable(String) // 不满足条件/被 gating 拦住等
        case failed(String)      // 真失败（网络/解析）
    }

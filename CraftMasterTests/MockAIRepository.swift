@@ -11,16 +11,21 @@ import Foundation
 final class MockAIRepository: AIRepository {
 
     private(set) var called: Bool = false
-    var stubbedInsight: AIInsight = AIInsight(
+    var stubbedReport: AICoachReport = AICoachReport(
         summary: "mock summary",
-        suggestion: "mock suggestion",
+        advice: AICoachAdvice(
+            tomorrowMinutes: 15,
+            intensity: .easy,
+            focus: "Build momentum",
+            coachNote: "mock note"
+        ),
         generatedAt: Date(timeIntervalSince1970: 1)
     )
     var stubbedError: (any Error)?
 
-    func generateInsight(input: AIInsightInput) async throws -> AIInsight {
+    func generateReport(input: AIInsightInput) async throws -> AICoachReport {
         called = true
         if let stubbedError { throw stubbedError }
-        return stubbedInsight
+        return stubbedReport
     }
 }
