@@ -60,17 +60,13 @@ struct LogTodayScreen: View {
 
                 PixelButton("Save", isEnabled: selectedGoalId != nil && !app.goals.isEmpty) {
                     Task {
-                        do {
-                            guard let gid = selectedGoalId else {
-                                alert = .init(title: "Oops", message: "Please select a goal.")
-                                return
-                            }
-                            let minutes = Int(minutesText) ?? 0
-                            try await app.upsertLog(goalId: gid, day: Date(), minutes: minutes)
-                            alert = .init(title: "Saved", message: "Today's log saved.")
-                        } catch {
-                            alert = .init(title: "Oops", message: error.localizedDescription)
+                        guard let gid = selectedGoalId else {
+                            alert = .init(title: "Oops", message: "Please select a goal.")
+                            return
                         }
+                        let minutes = Int(minutesText) ?? 0
+                        await app.upsertLog(goalId: gid, day: Date(), minutes: minutes)
+                        alert = .init(title: "Saved", message: "Today's log saved.")
                     }
                 }
             }

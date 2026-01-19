@@ -50,11 +50,7 @@ struct ArchivedGoalsScreen: View {
                             .swipeActions(edge: .trailing) {
                                 Button {
                                     Task {
-                                        do {
-                                            try await app.unarchiveGoal(id: goal.id)
-                                        } catch {
-                                            alert = .init(title: "Oops", message: error.localizedDescription)
-                                        }
+                                        await app.unarchiveGoal(id: goal.id)
                                     }
                                 } label: {
                                     Label("Restore", systemImage: "arrow.uturn.backward")

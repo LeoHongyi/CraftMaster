@@ -48,10 +48,7 @@ struct GoalListScreen: View {
                             .onTapGesture { editingGoal = goal }
                             .swipeActions {
                                 Button {
-                                    Task {
-                                        do { try await app.archiveGoal(id: goal.id) }
-                                        catch { showError(error) }
-                                    }
+                                    Task { await app.archiveGoal(id: goal.id) }
                                 } label: {
                                     Label("Archive", systemImage: "archivebox")
                                 }
@@ -82,18 +79,12 @@ struct GoalListScreen: View {
             }
             .sheet(isPresented: $showAdd) {
                 AddGoalSheet { title in
-                    Task {
-                        do { try await app.createGoal(title: title) }
-                        catch { showError(error) }
-                    }
+                    Task { await app.createGoal(title: title) }
                 }
             }
             .sheet(item: $editingGoal) { goal in
                 EditGoalSheet(goal: goal) { updated in
-                    Task {
-                        do { try await app.updateGoal(updated) }
-                        catch { showError(error) }
-                    }
+                    Task { await app.updateGoal(updated) }
                 }
             }
             .alert(item: $alert) { a in

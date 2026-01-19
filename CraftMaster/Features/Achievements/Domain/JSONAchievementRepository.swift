@@ -16,13 +16,29 @@ actor JSONAchievementRepository: AchievementRepository {
     }
 
     func listUnlocked() async throws -> [AchievementUnlock] {
-        guard FileManager.default.fileExists(atPath: fileURL.path) else { return [] }
-        let data = try Data(contentsOf: fileURL)
-        return try JSONDecoder().decode([AchievementUnlock].self, from: data)
+        do {
+            guard FileManager.default.fileExists(atPath: fileURL.path) else { return [] }
+            let data = try Data(contentsOf: fileURL)
+            return try JSONDecoder().decode([AchievementUnlock].self, from: data)
+        } catch _ as DecodingError {
+            throw AppError.system(.decoding)
+        } catch _ as EncodingError {
+            throw AppError.system(.encoding)
+        } catch {
+            throw AppError.system(.io)
+        }
     }
 
     func saveUnlocked(_ unlocks: [AchievementUnlock]) async throws {
-        let data = try JSONEncoder().encode(unlocks)
-        try data.write(to: fileURL, options: [.atomic])
+        do {
+            let data = try JSONEncoder().encode(unlocks)
+            try data.write(to: fileURL, options: [.atomic])
+        } catch _ as DecodingError {
+            throw AppError.system(.decoding)
+        } catch _ as EncodingError {
+            throw AppError.system(.encoding)
+        } catch {
+            throw AppError.system(.io)
+        }
     }
 }

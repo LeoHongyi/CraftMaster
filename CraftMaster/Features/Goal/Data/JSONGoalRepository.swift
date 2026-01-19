@@ -18,37 +18,69 @@ actor JSONGoalRepository: GoalRepository {
     }
 
     func listGoals() async throws -> [Goal] {
-        let goals = try loadAll()
-        return goals.sorted { $0.createdAt > $1.createdAt }
+        do {
+            let goals = try loadAll()
+            return goals.sorted { $0.createdAt > $1.createdAt }
+        } catch _ as DecodingError {
+            throw AppError.system(.decoding)
+        } catch _ as EncodingError {
+            throw AppError.system(.encoding)
+        } catch {
+            throw AppError.system(.io)
+        }
     }
 
     func createGoal(title: String, targetHours: Int) async throws -> Goal {
-        var goals = try await listGoals()
-        let newGoal = Goal(
-            title: title,
-            targetHours: targetHours,
-            createdAt: Date()
-        )
-        goals.insert(newGoal, at: 0)
-        try persist(goals)
-        return newGoal
+        do {
+            var goals = try loadAll()
+            let newGoal = Goal(
+                title: title,
+                targetHours: targetHours,
+                createdAt: Date()
+            )
+            goals.insert(newGoal, at: 0)
+            try persist(goals)
+            return newGoal
+        } catch _ as DecodingError {
+            throw AppError.system(.decoding)
+        } catch _ as EncodingError {
+            throw AppError.system(.encoding)
+        } catch {
+            throw AppError.system(.io)
+        }
     }
 
     func updateGoal(_ goal: Goal) async throws {
-        var goals = try loadAll()
-        guard let idx = goals.firstIndex(where: { $0.id == goal.id }) else { return }
-        goals[idx] = goal
-        try persist(goals)
+        do {
+            var goals = try loadAll()
+            guard let idx = goals.firstIndex(where: { $0.id == goal.id }) else { return }
+            goals[idx] = goal
+            try persist(goals)
+        } catch _ as DecodingError {
+            throw AppError.system(.decoding)
+        } catch _ as EncodingError {
+            throw AppError.system(.encoding)
+        } catch {
+            throw AppError.system(.io)
+        }
     }
 
     func deleteGoal(id: UUID) async throws {
-        // Soft delete: archive only.
-        var goals = try loadAll()
-        guard let idx = goals.firstIndex(where: { $0.id == id }) else { return }
-        var archived = goals[idx]
-        archived.isArchived = true
-        goals[idx] = archived
-        try persist(goals)
+        do {
+            // Soft delete: archive only.
+            var goals = try loadAll()
+            guard let idx = goals.firstIndex(where: { $0.id == id }) else { return }
+            var archived = goals[idx]
+            archived.isArchived = true
+            goals[idx] = archived
+            try persist(goals)
+        } catch _ as DecodingError {
+            throw AppError.system(.decoding)
+        } catch _ as EncodingError {
+            throw AppError.system(.encoding)
+        } catch {
+            throw AppError.system(.io)
+        }
     }
 
     // MARK: - persistence (v2 container + v1 fallback)
@@ -68,7 +100,7 @@ actor JSONGoalRepository: GoalRepository {
             return v1
         }
 
-        throw AppError.unknown
+        throw AppError.system(.decoding)
     }
 
     private func persist(_ goals: [Goal]) throws {

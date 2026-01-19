@@ -17,9 +17,17 @@ actor JSONLogRepository: LogRepository {
     }
 
     func listLogs(goalId: UUID?) async throws -> [LogEntry] {
-        let all = try loadAll()
-        let filtered = goalId == nil ? all : all.filter { $0.goalId == goalId }
-        return filtered.sorted { $0.day > $1.day }
+        do {
+            let all = try loadAll()
+            let filtered = goalId == nil ? all : all.filter { $0.goalId == goalId }
+            return filtered.sorted { $0.day > $1.day }
+        } catch _ as DecodingError {
+            throw AppError.system(.decoding)
+        } catch _ as EncodingError {
+            throw AppError.system(.encoding)
+        } catch {
+            throw AppError.system(.io)
+        }
     }
 
     private func normalizeDays(_ logs: [LogEntry]) -> [LogEntry] {
@@ -37,33 +45,57 @@ actor JSONLogRepository: LogRepository {
     }
 
     func upsertLog(goalId: UUID, day: Date, minutes: Int) async throws -> LogEntry {
-        var logs = try loadAll()
-        let normalizedDay = Calendar.current.startOfDay(for: day)
+        do {
+            var logs = try loadAll()
+            let normalizedDay = Calendar.current.startOfDay(for: day)
 
-        if let idx = logs.firstIndex(where: { $0.goalId == goalId && Calendar.current.isDate($0.day, inSameDayAs: normalizedDay) }) {
-            var existing = logs[idx]
-            existing.minutes = minutes
-            existing.updatedAt = Date()
-            logs[idx] = existing
-            try persist(logs)
-            return existing
-        } else {
-            let new = LogEntry(goalId: goalId, day: normalizedDay, minutes: minutes)
-            logs.append(new)
-            try persist(logs)
-            return new
+            if let idx = logs.firstIndex(where: { $0.goalId == goalId && Calendar.current.isDate($0.day, inSameDayAs: normalizedDay) }) {
+                var existing = logs[idx]
+                existing.minutes = minutes
+                existing.updatedAt = Date()
+                logs[idx] = existing
+                try persist(logs)
+                return existing
+            } else {
+                let new = LogEntry(goalId: goalId, day: normalizedDay, minutes: minutes)
+                logs.append(new)
+                try persist(logs)
+                return new
+            }
+        } catch _ as DecodingError {
+            throw AppError.system(.decoding)
+        } catch _ as EncodingError {
+            throw AppError.system(.encoding)
+        } catch {
+            throw AppError.system(.io)
         }
     }
 
     func deleteLog(id: UUID) async throws {
-        var logs = try loadAll()
-        logs.removeAll { $0.id == id }
-        try persist(logs)
+        do {
+            var logs = try loadAll()
+            logs.removeAll { $0.id == id }
+            try persist(logs)
+        } catch _ as DecodingError {
+            throw AppError.system(.decoding)
+        } catch _ as EncodingError {
+            throw AppError.system(.encoding)
+        } catch {
+            throw AppError.system(.io)
+        }
     }
 
     func countLogs(goalId: UUID) async throws -> Int {
-        let logs = try loadAll()
-        return logs.filter { $0.goalId == goalId }.count
+        do {
+            let logs = try loadAll()
+            return logs.filter { $0.goalId == goalId }.count
+        } catch _ as DecodingError {
+            throw AppError.system(.decoding)
+        } catch _ as EncodingError {
+            throw AppError.system(.encoding)
+        } catch {
+            throw AppError.system(.io)
+        }
     }
 
     // MARK: - persistence
@@ -86,7 +118,7 @@ actor JSONLogRepository: LogRepository {
         }
 
         // 3) 两种都失败：说明文件损坏或未知格式
-        throw AppError.unknown
+        throw AppError.system(.decoding)
     }
 
     private func migrateFromV1(_ v1: [LogEntryV1]) -> [LogEntry] {

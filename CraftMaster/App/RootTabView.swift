@@ -36,6 +36,15 @@ struct RootTabView: View {
         .onAppear {
             presentNextIfNeeded()
         }
+        .alert(item: $app.presentableError) { err in
+            Alert(
+                title: Text(err.title),
+                message: Text(err.message),
+                dismissButton: .default(Text("OK")) {
+                    app.presentableError = nil
+                }
+            )
+        }
     }
 
     @ViewBuilder

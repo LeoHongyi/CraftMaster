@@ -23,6 +23,13 @@ final class AppState: ObservableObject {
     @Published var pendingAchievementToasts: [AchievementDefinition] = []
     @Published var highlightAchievementId: String?
     @Published private(set) var stats: StatsCache = .init()
+    @Published var presentableError: PresentableError?
+
+    private func debugLog(_ error: any Error) {
+#if DEBUG
+        print("❌ Error:", error)
+#endif
+    }
 
     // 依赖（Data/Domain）
     private let goalRepo: GoalRepository
@@ -59,9 +66,12 @@ final class AppState: ObservableObject {
             let list = try await goalRepo.listGoals()
             allGoals = list
             goals = list.filter { !$0.isArchived }
+        } catch let e as AppError {
+            debugLog(e)
+            presentableError = mapToPresentable(e)
         } catch {
-            // Day1: 简化处理。Week2 Day2 我们会做全局错误流
-            print("loadGoals error:", error)
+            debugLog(error)
+            presentableError = mapToPresentable(.system(.unknown))
         }
     }
 
@@ -69,10 +79,14 @@ final class AppState: ObservableObject {
        do {
            logs = try await logRepo.listLogs(goalId: nil)
            recomputeStats(from: logs)
-
+       } catch let e as AppError {
+           debugLog(e)
+           presentableError = mapToPresentable(e)
+           stats = .init()
        } catch {
-           print("loadLogs error:", error)
-           stats = .init() // 可选：避免 UI 显示旧数据
+           debugLog(error)
+           presentableError = mapToPresentable(.system(.unknown))
+           stats = .init()
        }
 
        await evaluateAchievementsAfterLogsChanged()
@@ -114,8 +128,12 @@ final class AppState: ObservableObject {
 
            pendingAchievementToasts.append(contentsOf: append)
            lastUnlocked = newUnlocks.last
+       } catch let e as AppError {
+           debugLog(e)
+           presentableError = mapToPresentable(e)
        } catch {
-           print("saveUnlocked error:", error)
+           debugLog(error)
+           presentableError = mapToPresentable(.system(.unknown))
        }
    }
 
@@ -125,39 +143,87 @@ final class AppState: ObservableObject {
     }
 
     // MARK: - Goal Actions
-    func createGoal(title: String) async throws {
-        _ = try await goalUseCase.create(title: title)
-        await reloadAll()
+    func createGoal(title: String) async {
+        do {
+            _ = try await goalUseCase.create(title: title)
+            await reloadAll()
+        } catch let e as AppError {
+            debugLog(e)
+            presentableError = mapToPresentable(e)
+        } catch {
+            debugLog(error)
+            presentableError = mapToPresentable(.system(.unknown))
+        }
     }
 
-    func updateGoal(_ goal: Goal) async throws {
-        try await goalUseCase.update(goal: goal)
-        await reloadAll()
+    func updateGoal(_ goal: Goal) async {
+        do {
+            try await goalUseCase.update(goal: goal)
+            await reloadAll()
+        } catch let e as AppError {
+            debugLog(e)
+            presentableError = mapToPresentable(e)
+        } catch {
+            debugLog(error)
+            presentableError = mapToPresentable(.system(.unknown))
+        }
     }
 
     /// Archive (soft delete) a goal. Logs stay and history/stats keep working.
-    func archiveGoal(id: UUID) async throws {
-        try await goalUseCase.delete(goalId: id)
-        await reloadAll()
+    func archiveGoal(id: UUID) async {
+        do {
+            try await goalUseCase.delete(goalId: id)
+            await reloadAll()
+        } catch let e as AppError {
+            debugLog(e)
+            presentableError = mapToPresentable(e)
+        } catch {
+            debugLog(error)
+            presentableError = mapToPresentable(.system(.unknown))
+        }
     }
 
-    func unarchiveGoal(id: UUID) async throws {
-        guard let idx = allGoals.firstIndex(where: { $0.id == id }) else { return }
-        var restored = allGoals[idx]
-        restored.isArchived = false
-        try await goalRepo.updateGoal(restored)
-        await loadGoals()
+    func unarchiveGoal(id: UUID) async {
+        do {
+            guard let idx = allGoals.firstIndex(where: { $0.id == id }) else { return }
+            var restored = allGoals[idx]
+            restored.isArchived = false
+            try await goalRepo.updateGoal(restored)
+            await loadGoals()
+        } catch let e as AppError {
+            debugLog(e)
+            presentableError = mapToPresentable(e)
+        } catch {
+            debugLog(error)
+            presentableError = mapToPresentable(.system(.unknown))
+        }
     }
 
     // MARK: - Log Actions
-    func upsertLog(goalId: UUID, day: Date, minutes: Int) async throws {
-        _ = try await logUseCase.upsert(goalId: goalId, day: day, minutes: minutes)
-        await loadLogs()
+    func upsertLog(goalId: UUID, day: Date, minutes: Int) async {
+        do {
+            _ = try await logUseCase.upsert(goalId: goalId, day: day, minutes: minutes)
+            await loadLogs()
+        } catch let e as AppError {
+            debugLog(e)
+            presentableError = mapToPresentable(e)
+        } catch {
+            debugLog(error)
+            presentableError = mapToPresentable(.system(.unknown))
+        }
     }
 
-    func deleteLog(id: UUID) async throws {
-        try await logRepo.deleteLog(id: id)
-        await loadLogs()
+    func deleteLog(id: UUID) async {
+        do {
+            try await logRepo.deleteLog(id: id)
+            await loadLogs()
+        } catch let e as AppError {
+            debugLog(e)
+            presentableError = mapToPresentable(e)
+        } catch {
+            debugLog(error)
+            presentableError = mapToPresentable(.system(.unknown))
+        }
     }
 
     // MARK: - Stats
@@ -232,8 +298,12 @@ final class AppState: ObservableObject {
    func loadAchievements() async {
        do {
            unlockedAchievements = try await achievementRepo.listUnlocked()
+       } catch let e as AppError {
+           debugLog(e)
+           presentableError = mapToPresentable(e)
        } catch {
-           print("loadAchievements error:", error)
+           debugLog(error)
+           presentableError = mapToPresentable(.system(.unknown))
        }
    }
    
@@ -318,14 +388,13 @@ final class AppState: ObservableObject {
    }
 }
 
-#if DEBUG
 extension AppState {
    func debugUpsertLog(daysAgo: Int, minutes: Int = 10) {
        guard let gid = goals.first?.id else { return }
        let cal = Calendar.current
        let day = cal.date(byAdding: .day, value: -daysAgo, to: Date())!
        Task {
-           try? await upsertLog(goalId: gid, day: day, minutes: minutes)
+           await upsertLog(goalId: gid, day: day, minutes: minutes)
        }
    }
     
@@ -341,11 +410,22 @@ extension AppState {
                     try await logRepo.deleteLog(id: item.id)
                 }
                 await loadLogs()
+            } catch let e as AppError {
+                debugLog(e)
+                presentableError = mapToPresentable(e)
             } catch {
-                print("debugClearAllLogs error:", error)
+                debugLog(error)
+                presentableError = mapToPresentable(.system(.unknown))
             }
         }
     }
+
+#if DEBUG
+    /// Exposes internal mapping for unit tests only.
+    func performMapForTest(_ e: AppError) -> PresentableError? {
+        mapToPresentable(e)
+    }
+#endif
 
     func debugSeedStreak(days: Int, minutes: Int = 10) {
         guard let gid = goals.first?.id else {
@@ -357,7 +437,7 @@ extension AppState {
             let cal = Calendar.current
             for i in 0..<days {
                 let day = cal.date(byAdding: .day, value: -i, to: Date())!
-                try? await upsertLog(goalId: gid, day: day, minutes: minutes)
+                await upsertLog(goalId: gid, day: day, minutes: minutes)
             }
         }
     }
@@ -365,5 +445,29 @@ extension AppState {
     func debugSeedMilestone(_ milestone: Int) {
         debugSeedStreak(days: milestone, minutes: 10)
     }
+   
+   private func mapToPresentable(_ error: AppError) -> PresentableError? {
+       switch error {
+       case .userFacing(let uf):
+           switch uf {
+           case .validation(let msg):
+               return .init(title: "Invalid Input", message: msg)
+           case .operationNotAllowed(let msg):
+               return .init(title: "Not Allowed", message: msg)
+           case .notFound(let msg):
+               return .init(title: "Not Found", message: msg)
+           }
+
+       case .system:
+           return .init(
+               title: "Something went wrong",
+               message: "Please try again later."
+           )
+
+       case .fatal(let msg):
+           assertionFailure(msg)
+           return nil
+       }
+   }
+   
 }
-#endif

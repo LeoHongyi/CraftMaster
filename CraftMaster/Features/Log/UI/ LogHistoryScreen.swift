@@ -38,8 +38,7 @@ struct LogHistoryScreen: View {
                 .swipeActions(edge: .trailing) {
                     Button(role: .destructive) {
                         Task {
-                            do { try await app.deleteLog(id: log.id) }
-                            catch { alert = .init(title: "Oops", message: error.localizedDescription) }
+                            await app.deleteLog(id: log.id)
                         }
                     } label: {
                         Label("Delete", systemImage: "trash")
@@ -63,11 +62,7 @@ struct LogHistoryScreen: View {
         .sheet(item: $editing) { entry in
             EditLogView(entry: entry) { minutes in
                 Task {
-                    do {
-                        try await app.upsertLog(goalId: entry.goalId, day: entry.day, minutes: minutes)
-                    } catch {
-                        alert = .init(title: "Oops", message: error.localizedDescription)
-                    }
+                    await app.upsertLog(goalId: entry.goalId, day: entry.day, minutes: minutes)
                 }
             }
         }
